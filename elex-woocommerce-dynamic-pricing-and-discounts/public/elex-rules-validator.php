@@ -894,7 +894,7 @@ class Elex_RulesValidator
 				$total_items_in_cart++;
 			}
 			$total_all_units_in_cart++;
-			$total_weight_in_cart += !empty($xa_cart_weight[$pid]) ? $xa_cart_weight[$pid] : (float) $product->get_weight();
+			$total_weight_in_cart += !empty($xa_cart_weight[$pid]) ? (float) $xa_cart_weight[$pid] : (float) $product->get_weight();
 			$total_price_in_cart  += !empty($xa_cart_price[$pid]) ? $xa_cart_price[$pid] : (float) $price;
 		}
 		foreach ($xa_cart_quantities as $_pid => $_qnty) {
@@ -1002,7 +1002,7 @@ class Elex_RulesValidator
 		$min          = (empty($rule['min']) == true) ? 1 : $rule['min'];
 		$max          = (empty($rule['max']) == true) ? 999999999 : $rule['max'];
 		$total_price  = !empty($price) ? ($price * $current_quantity) : 0;
-		$total_weight = !empty($weight) ? ($weight * $current_quantity) : 0;
+		$total_weight = !empty($weight) ? ((float)$weight * $current_quantity) : 0;
 		if ($max < $min && $max != 0) {
 			return false;
 		}
@@ -1071,7 +1071,6 @@ class Elex_RulesValidator
 		if ($this->for_offers_table == true) {
 			return $this->elex_dp_check_date_range_and_roles($rule, 'product_rules');
 		} // to show in offers table
-
 		if ($rule['check_on'] == 'Quantity') {
 
 			if (is_cart() && (empty($pid) || !in_array($pid, array_keys($xa_cart_quantities)))) {
