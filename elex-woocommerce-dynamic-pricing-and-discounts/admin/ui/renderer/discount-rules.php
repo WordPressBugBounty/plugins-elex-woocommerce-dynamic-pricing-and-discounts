@@ -55,22 +55,26 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 						foreach ($execution_order as $key => $tabkey) {
 							$tablink = esc_url(add_query_arg(array('page' => 'dp-discount-rules-page', 'tab' => $tabkey), admin_url('admin.php')));
 							switch ($tabkey) {
-								case 'product_rules': ?>
+								case 'product_rules':
+									?>
 									<a href="<?php echo $tablink; ?>" class=" elex-dynamic-pricing-main-link <?php echo $active_tab === 'product_rules' ? 'active' : ''; ?>">
 										<?php esc_html_e('Product Rule', 'eh-dynamic-pricing-discounts'); ?>
 									</a>
 									<svg xmlns="http://www.w3.org/2000/svg" width="2" height="100%" viewBox="0 0 2 25.587">
 										<path id="carrier_seperator" data-name="carrier seperator" d="M2565.89-576v23.587" transform="translate(-2564.89 577)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="2" />
 									</svg>
-								<?php break;
-								case 'category_rules':  ?>
+								<?php
+									break;
+								case 'category_rules':  
+									?>
 									<a href="<?php echo $tablink; ?>" class=" elex-dynamic-pricing-main-link <?php echo $active_tab === 'category_rules' ? 'active' : ''; ?>">
 										<?php esc_html_e('Category Rules', 'eh-dynamic-pricing-discounts'); ?>
 									</a>
 									<svg xmlns="http://www.w3.org/2000/svg" width="2" height="100%" viewBox="0 0 2 25.587">
 										<path id="carrier_seperator" data-name="carrier seperator" d="M2565.89-576v23.587" transform="translate(-2564.89 577)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="2" />
 									</svg>
-								<?php break;
+								<?php
+									break;
 								default:
 									break;
 							}
@@ -81,7 +85,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 				</div>
 
 				<div>
-				    <?php if (!in_array($active_tab, $execution_order)) { ?>
+					<?php if (!in_array($active_tab, $execution_order)) { ?>
 						<!-- when no rule tab is there -->
 						<div class="w-100 text-center">
 							<img src="<?php echo esc_url( ELEX_DP_CRM_MAIN_IMG . 'IsolationMode_2.svg' ); ?>" alt="" class="w-100" style="max-width: 684px; margin: auto;">
@@ -94,8 +98,12 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 						<div class="w-100 text-center">
 							<img src="<?php echo esc_url( ELEX_DP_CRM_MAIN_IMG . 'IsolationMode.svg' ); ?>" alt="" class="w-100" style="max-width: 684px; margin: auto;">
 							<div class="text-center">
-								<button class="btn btn-primary elex-dynamic-pricing-popup-open-btn"><?php esc_html_e('Create My First
-									Rule', 'eh-dynamic-pricing-discounts'); ?></button>
+								<button class="btn btn-primary elex-dynamic-pricing-popup-open-btn">
+								<?php
+								esc_html_e('Create My First
+									Rule', 'eh-dynamic-pricing-discounts');
+								?>
+																									</button>
 							</div>
 						</div>
 
@@ -104,7 +112,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 						$allrules       = $allrules[$active_tab];
 						$settings       = get_option('xa_dynamic_pricing_setting', array());
 
-					?>
+						?>
 
 						<div class="d-flex justify-content-between align-items-center mb-3">
 							<h6 class="mb-0 elex-dynamic-pricing-rules-header"><?php esc_html_e('Rules Sets', 'eh-dynamic-pricing-discounts'); ?></h6>
@@ -131,7 +139,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 								if (function_exists('wc_memberships_get_membership_plans')) {
 									$member_plans = wc_memberships_get_membership_plans();
 								}
-                                $no_of_rules = count($allrules);
+								$no_of_rules = count($allrules);
 								?>
 								<input type="hidden" id="no_of_rules" name="no_of_rules" value="<?php echo esc_attr($no_of_rules); ?>">
 								<?php
@@ -139,7 +147,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 								foreach ($allrules as $key => $value) {
 									//Checkon
 									$checkon= '';
-									if(isset($value['check_on']) && !empty($value['check_on'])) {
+									if (isset($value['check_on']) && !empty($value['check_on'])) {
 										switch ($value['check_on']) {
 											case 'Quantity':
 												$checkon = 'No. of Items';
@@ -160,7 +168,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 									}
 									if ($active_tab === 'product_rules') {
 										require ELEX_DP_BASIC_ROOT_PATH . 'admin/ui/view/discount-rules/card/product-rules.php';
-									}else if ($active_tab === 'category_rules') {
+									} else if ($active_tab === 'category_rules') {
 										require ELEX_DP_BASIC_ROOT_PATH . 'admin/ui/view/discount-rules/card/category-rules.php';
 									}
 								}
@@ -179,9 +187,9 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 			<form method="get" id="popup_form">
 				<?php
 				if (isset($_REQUEST['edit'])) {
-					wp_nonce_field('update_rule_' . $_REQUEST['edit'],'update_rule_' . $_REQUEST['edit']);
+					wp_nonce_field('update_rule_' . $_REQUEST['edit'], 'update_rule_' . $_REQUEST['edit']);
 				} else {
-					wp_nonce_field('save_rule_nonce','save_rule_nonce');
+					wp_nonce_field('save_rule_nonce', 'save_rule_nonce');
 				}
 				?>
 				<input type="hidden" name="page" value="<?php echo esc_attr('dp-discount-rules-page'); ?>">
@@ -380,7 +388,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 		var no_of_rules = jQuery('#no_of_rules').val();
 		if(no_of_rules == 1){
 			// var className = document.getElementById('className').value;
-            document.getElementsByClassName('elex-ac-edit-rule-up-btn')[0].disabled=true;
+			document.getElementsByClassName('elex-ac-edit-rule-up-btn')[0].disabled=true;
 			document.getElementsByClassName('elex-ac-edit-rule-down-btn')[0].disabled=true;
 		}
 		var isFormSubmitting = false;
@@ -417,7 +425,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 						minInput.focus();
 						return;
 					}
-			    }
+				}
 
 				isFormSubmitting = true;
 
@@ -432,7 +440,7 @@ if ($active_tab === 'No Rules Selected' && !empty($settings['execution_order']))
 			// Clear the form fields or redirect to another page
 			document.getElementById("myForm").reset();
 		});
-    
+	
 
 		//Js for rule deleting confirmation Alert ==>
 		var cardform = document.getElementById("eh_rule_form");

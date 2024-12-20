@@ -7,6 +7,17 @@ add_action('admin_init', 'elex_dp_import_rules');
 
 function elex_dp_import_rules() {
 	$rules_array = get_option('xa_dp_rules', array());
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+	
+	if ( isset($_POST['import_tab']) && ( !isset($_POST['eha_import_export_nonce']) || !wp_verify_nonce($_POST['eha_import_export_nonce'], 'eha_import_export_nonce') ) ) {
+		// Nonce is invalid or not present
+		wp_safe_redirect(admin_url('admin.php?page=dp-import-export-page&nonce_verification_failed'));
+		return false;
+	
+	}
+	
 	if (isset($_POST['import_tab']) && !empty($_POST['import_tab']) && !empty($_FILES['import_file'])) {
 		$tab       = $_POST['import_tab'];
 		$type      = !empty($_POST['import_type'])?$_POST['import_type']:'';
@@ -90,10 +101,10 @@ function elex_dp_import_rules() {
 				return true;
 			} else {
 				$file_data = $_FILES;
-				add_action('admin_notices', function() use ($file_data, $tab){
+				add_action('admin_notices', function() use ( $file_data, $tab) {
 					?>
 					<div class="notice notice-error is-dismissible" style="">
-						<p><?php _e( "You can not import " . $file_data['import_file']['name'] . " into " . $tab , 'eh-dynamic-pricing-discounts'); ?></p>
+						<p><?php _e( 'You can not import ' . $file_data['import_file']['name'] . ' into ' . $tab , 'eh-dynamic-pricing-discounts'); ?></p>
 					</div>
 					<?php
 				});
@@ -109,10 +120,10 @@ function elex_dp_import_rules() {
 			}
 			$data = (array) json_decode(file_get_contents($import_file), true);
 			if (!empty($data['type']) && $data['type'] !== $tab) {
-				add_action('admin_notices', function() use ($data, $tab){
+				add_action('admin_notices', function() use ( $data, $tab) {
 					?>
 					<div class="notice notice-error is-dismissible" style="">
-						<p><?php _e( "You can not import " . $data['type'] . " into " . $tab , 'eh-dynamic-pricing-discounts'); ?></p>
+						<p><?php _e( 'You can not import ' . $data['type'] . ' into ' . $tab , 'eh-dynamic-pricing-discounts'); ?></p>
 					</div>
 					<?php
 				});

@@ -16,7 +16,7 @@ if (isset($_REQUEST['submit'])) {
 			<p><?php esc_html_e('Security check failed!', 'eh-dynamic-pricing-discounts'); ?></p>
 		</div>
 		<?php
-    }else{
+	} else {
 
 		if (isset($_REQUEST['tab'])) {
 			$active_tab = sanitize_text_field($_REQUEST['tab']);
@@ -116,7 +116,7 @@ if (isset($_REQUEST['submit'])) {
 
 			update_option('xa_dynamic_pricing_setting', $saved_data);
 			wp_safe_redirect(add_query_arg(array('page' => 'dp-settings-page', 'tab' => $active_tab), admin_url('admin.php')));
-		?>
+			?>
 			<div class="notice notice-success is-dismissible">
 				<p><?php esc_html_e('Saved Successfully', 'eh-dynamic-pricing-discounts'); ?></p>
 			</div>
@@ -128,5 +128,5 @@ if (isset($_REQUEST['submit'])) {
 			</div>
 			<?php
 		}
-    }
+	}
 }

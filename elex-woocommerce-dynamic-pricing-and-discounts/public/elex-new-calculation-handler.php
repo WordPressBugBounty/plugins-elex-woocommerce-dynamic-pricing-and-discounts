@@ -15,13 +15,12 @@ require_once 'elex-rules-validator.php';
  *
  * @author Akshay
  */
-class Elex_NewCalculationHandler
-{
+class Elex_NewCalculationHandler {
+
 
 	public $debug_mode = false;
 
-	public function __construct()
-	{
+	public function __construct() {
 		$dummy_settings['product_rules_on_off']          = 'enable';
 		$dummy_settings['combinational_rules_on_off']    = 'enable';
 		$dummy_settings['category_rules_on_off']         = 'enable';
@@ -109,10 +108,10 @@ class Elex_NewCalculationHandler
 				if ($prod->is_type('variation')) {
 					$parent_id                 = elex_dp_is_wc_version_gt_eql('2.7') ? $prod->get_parent_id() : $prod->parent->id;
 					$parent_product            = wc_get_product($parent_id);
-					if($parent_product){
+					if ($parent_product) {
 						$xa_cart_categories[$_pid] = elex_dp_is_wc_version_gt_eql('2.7') ? $parent_product->get_category_ids() : elex_dp_get_category_ids($parent_product);
 						$xa_cart_tags[$_pid]       = xa_get_tag_ids($_pid);
-					}else{
+					} else {
 						$xa_cart_categories[$_pid] = elex_dp_is_wc_version_gt_eql('2.7') ? $prod->get_category_ids() : elex_dp_get_category_ids($prod);
 						$xa_cart_tags[$_pid]       = xa_get_tag_ids($prod);
 					}
@@ -122,12 +121,12 @@ class Elex_NewCalculationHandler
 					$xa_cart_tags[$_pid]       = xa_get_tag_ids($prod);
 				}
 				foreach ($xa_cart_categories[$_pid] as $_cid) {
-					$xa_cart_categories_items[$_cid] = isset($xa_cart_categories_items[$_cid]) ? ($xa_cart_categories_items[$_cid] + 1) : 1;
-					$xa_cart_categories_units[$_cid] = isset($xa_cart_categories_units[$_cid]) ? ($xa_cart_categories_units[$_cid] + $_qnty) : $_qnty;
+					$xa_cart_categories_items[$_cid] = isset($xa_cart_categories_items[$_cid]) ? ( $xa_cart_categories_items[$_cid] + 1 ) : 1;
+					$xa_cart_categories_units[$_cid] = isset($xa_cart_categories_units[$_cid]) ? ( $xa_cart_categories_units[$_cid] + $_qnty ) : $_qnty;
 				}
 				foreach ($xa_cart_tags[$_pid] as $_tid) {
-					$xa_cart_tags_items[$_tid] = isset($xa_cart_tags_items[$_tid]) ? ($xa_cart_tags_items[$_tid] + 1) : 1;
-					$xa_cart_tags_units[$_tid] = isset($xa_cart_tags_units[$_tid]) ? ($xa_cart_tags_units[$_tid] + $_qnty) : $_qnty;
+					$xa_cart_tags_items[$_tid] = isset($xa_cart_tags_items[$_tid]) ? ( $xa_cart_tags_items[$_tid] + 1 ) : 1;
+					$xa_cart_tags_units[$_tid] = isset($xa_cart_tags_units[$_tid]) ? ( $xa_cart_tags_units[$_tid] + $_qnty ) : $_qnty;
 				}
 			}
 			if ($xa_hooks) {
@@ -144,7 +143,7 @@ class Elex_NewCalculationHandler
 		/*Fix End     */
 	}
 
-	/**
+		/**
 	 * Finds valid rules for this product and return discounted price based on (all rules,first match,best discount)
 	 *
 	 * @param float $old_price  (price over which discount needs to be applied)
@@ -153,239 +152,124 @@ class Elex_NewCalculationHandler
 	 *
 	 * @return $discounted_price
 	 */
-	public function elex_dp_getDiscountedPriceForProduct($old_price = '', $product = null, $pid = null)
-	{
-		//error_log($product->get_id()." filter=".current_filter());
-		global $elex_dp_cached_prices;
-		if (!$elex_dp_cached_prices) {
-			$elex_dp_cached_prices = array();
-		}
-
-		if (!isset($elex_dp_cached_prices[$product->get_id()])) {
-			$elex_dp_cached_prices[$product->get_id()] = array();
-		}
-
-		// if (isset($elex_dp_cached_prices[$product->get_id()][current_filter()])) {
-		// 	return $elex_dp_cached_prices[$product->get_id()][current_filter()];
-		// }
-		// print("<pre>".print_r(debug_backtrace(),true)."</pre>");
-
-		global $xa_dp_setting;
-		$xa_add_on_true  = true;
-		$xa_add_on_false = false;
-		if (is_plugin_active('woocommerce-product-addons/woocommerce-product-addons.php')) {
-			if ($xa_dp_setting['xa_product_add_on_option'] == 'disable') {
-				$xa_add_on_true  = false;
-				$xa_add_on_false = true;
-			}
-		}
-
-		//Code added to make discount apply in custom woocommerce pages.
-		$product_filters = array('woocommerce_product_get_price', 'woocommerce_product_variation_get_price', 'woocommerce_product_variation_get_sale_price', 'woocommerce_product_get_sale_price');
-
-		if (apply_filters('xa_give_discount_on_addon_prices', true) == $xa_add_on_false && did_action('woocommerce_before_calculate_totals') || doing_action('woocommerce_before_calculate_totals')) {   // added this code for compatiblity with woocommerce product addons
-			// $elex_dp_cached_prices[$product->get_id()][current_filter()] = $old_price;
+	public function elex_dp_getDiscountedPriceForProduct( $old_price = '', $product = null, $pid = null) {
+		static $cached_prices = array();
+	   
+		   // Early return if product or price is not provided
+		if (!$product || !$old_price) {
 			return $old_price;
 		}
-		if (!is_shop() && !is_product() && !is_product_tag() &&  !is_product_category() && !did_action('woocommerce_before_calculate_totals') && apply_filters('xa_give_discount_on_addon_prices', true) == $xa_add_on_true && !in_array(current_filter(), $product_filters)) {   // added this code for compatiblity with woocommerce product addons
-			// $elex_dp_cached_prices[$product->get_id()][current_filter()] = $old_price;
+   
+		   $product_id = $product->get_id();
+		if (!isset($cached_prices[$product_id])) {
+			$cached_prices[$product_id] = array();
+		}
+		   
+		   // Check if the discount calculation should be skipped
+		   global $xa_hooks, $xa_dp_setting, $xa_cart_quantities, $xa_common_flat_discount;
+		   $apply_discount = apply_filters('xa_give_discount_on_addon_prices', true);
+		   
+		if (( !is_shop() && !is_product() && !is_product_tag() && !is_product_category() && !did_action('woocommerce_before_calculate_totals') )
+			   || ( !$apply_discount && ( did_action('woocommerce_before_calculate_totals') || doing_action('woocommerce_before_calculate_totals') ) )
+		   ) {
 			return $old_price;
 		}
-		global $xa_hooks, $xa_common_flat_discount, $xa_cart_price, $executed_pids;
-		remove_filter($xa_hooks['woocommerce_get_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22);
-		remove_filter($xa_hooks['woocommerce_get_sale_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22);    // update sale price on product page
-		remove_filter('woocommerce_product_variation_get_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22);
-		remove_filter('woocommerce_product_variation_get_sale_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22);    // update sale price on product page
-
-		$regular_price = $product->get_regular_price();
-
-		if (empty($pid)) {
-			$pid = elex_dp_get_pid($product);
+		if ( !is_cart() && !is_checkout() && !empty( get_transient('elex_dp_product_data_' . $product_id) ) ) {
+			$discounted_price = get_transient('elex_dp_product_data_' . $product_id);
+			return $discounted_price;
 		}
-
-		if ($pid == false) {
-			add_filter($xa_hooks['woocommerce_get_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);         // update sale price on product page
-			add_filter($xa_hooks['woocommerce_get_sale_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-			add_filter('woocommerce_product_variation_get_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-			add_filter('woocommerce_product_variation_get_sale_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-			$elex_dp_cached_prices[$product->get_id()][current_filter()] = $old_price;
+		   
+		   // If the discounted price is cached in transient, return it immediately
+		if (isset($cached_prices[$product_id][current_filter()])) {
+		return $cached_prices[$product_id][current_filter()];
+		}
+		   // Ensure hooks are added and removed properly
+		   $this->manageHooks(false);
+		   
+		   $regular_price = $product->get_regular_price();
+		   $pid = $pid ?: elex_dp_get_pid($product);
+   
+		if (!$pid) {
+			$this->manageHooks(true);
 			return $old_price;
 		}
-		if (((current_filter() == $xa_hooks['woocommerce_get_sale_price_hook_name']) || (current_filter() == 'woocommerce_product_variation_get_sale_price')) && empty($old_price)) {  // if sale price is empty then old price is regular_price
+   
+		   // Set old_price if empty in certain filters
+   
+   
+		if (in_array(current_filter(), array($xa_hooks['woocommerce_get_sale_price_hook_name'], 'woocommerce_product_variation_get_sale_price')) && empty($old_price)) {
 			$old_price = $regular_price;
 		}
-		$discounted_price = $old_price;
-		$weight           = $product->get_weight();
-		if (!empty($old_price) && (!empty($product) || !empty($pid))) {
-
-			global $xa_cart_quantities;
-			$parent_id = $pid;
-			if ($product->get_type() == 'variation') {
-				$parent_id = elex_dp_is_wc_version_gt_eql('2.7') ? $product->get_parent_id() : $product->parent->id;
-			}
-			if (isset($xa_cart_quantities[$pid]) || isset($xa_cart_quantities[$parent_id])) {
-				$current_quantity = isset($xa_cart_quantities[$pid]) ? $xa_cart_quantities[$pid] : $xa_cart_quantities[$parent_id];
-			} else {
-				$current_quantity = 0;
-			}
-			if ($current_quantity == 0  && class_exists('SitePress')) {
-				global $sitepress;
-				$trid    = $sitepress->get_element_trid($pid);
-				$trans   = $sitepress->get_element_translations($trid);
-				$all_ids = array();
-				foreach ($trans as $lan) {
-					$all_ids[] = $lan->element_id;
-				}
-				foreach ($all_ids as $_pid) {
-					if (!empty($xa_cart_quantities[$_pid])) {
-						$current_quantity = $xa_cart_quantities[$_pid];
-						break;
-					}
-				}
-			}
+   
+		   $discounted_price = $old_price;
+		   $weight = $product->get_weight();
+   
+		if (!empty($old_price) && $pid) {
+			$parent_id = ( $product->get_type() == 'variation' ) ? $product->get_parent_id() : $pid;
+			$current_quantity = $xa_cart_quantities[$pid] ?? $xa_cart_quantities[$parent_id] ?? 0;
+   
 			if (is_shop() || is_product_category() || is_product() || is_product_tag()) {
 				$current_quantity++;
 			}
+   
 			$objRulesValidator = new Elex_RulesValidator();
-
 			$valid_rules = $objRulesValidator->elex_dp_getValidRulesForProduct($product, $pid, $current_quantity, $discounted_price, $weight);
-
+   
 			if ($this->debug_mode) {
 				error_log(str_repeat('-', 380));
 				error_log('Valid Rules for Pid=' . $pid . ' and qnty=' . $current_quantity . ' Valid Rules= ' . print_r($valid_rules, true));
 			}
-			$mode = !empty($xa_dp_setting['mode']) ? $xa_dp_setting['mode'] : 'first_match';
-			// if (!empty($executed_pids[$pid]) && $mode == 'best_discount' && !$product->is_type('variation')) {
-			// 	$product->set_price($executed_pids[$pid]);
-			// 	add_filter($xa_hooks['woocommerce_get_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);         // update sale price on product page
-			// 	add_filter($xa_hooks['woocommerce_get_sale_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-			// 	add_filter('woocommerce_product_variation_get_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-			// 	add_filter('woocommerce_product_variation_get_sale_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-			// 	$elex_dp_cached_prices[$product->get_id()][current_filter()] = $executed_pids[$pid];
-			// 	return $executed_pids[$pid];
-			// }
-			if (is_array($valid_rules) && $valid_rules) {
-				$valid_flat_discount = [];
+   
+			if (is_array($valid_rules) && $valid_rules) {	
 				foreach ($valid_rules as $rule_type_colon_rule_no => $rule) {
-					//this section supports repeat execution for product rules
-					if (isset($rule['repeat_rule']) && $rule['repeat_rule'] == 'yes' && !empty($rule['max']) && !empty($rule['min'])) {
-						if ($rule['rule_type'] == 'product_rules') {
-							if ($product->get_type() == 'variation') {
-								$pparent_id = elex_dp_is_wc_version_gt_eql('2.7') ? $product->get_parent_id() : $product->parent->id;
-
-								if (is_array($rule['product_id']) && in_array($pparent_id, $rule['product_id'])) {
-									$pparent_product  = new WC_Product_Variable($pparent_id);
-									$variations       = $pparent_product->get_children();
-									$current_quantity = 0;
-									foreach ($variations as $value) {
-										if (isset($xa_cart_quantities[$value])) {
-											$current_quantity += $xa_cart_quantities[$value];
-										}
-									}
-									if (isset($xa_cart_quantities[$pparent_id])) {
-										$current_quantity += $xa_cart_quantities[$value];
-									}
-									if (is_shop() || is_product_category() || is_product() || is_product_tag()) {
-										$current_quantity++;
-									}
-								}
-							}
-						}
-						$times       = intval($current_quantity / $rule['max']);
-						$total_price = 0;
-						$repeat_qnty = (float) $rule['max'];
-						if ($this->debug_mode) {
-							error_log(str_repeat('>', 208));
-							error_log('Executing Rule(Repeat=True):' . $rule_type_colon_rule_no);
-						}
-						if (!empty($rule['discount_type']) && $rule['discount_type'] == 'Flat Discount') {
-							$xa_common_flat_discount[$rule['rule_type'] . ':' . $rule['rule_no'] . ':' . $pid] = floatval($rule['value']) * floatval($times);
-							if (!empty($rule['adjustment'])) {
-								$adjusted_qnty    = !empty($objRulesValidator->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']]) ? $objRulesValidator->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] : $current_quantity;
-								$discounted_price = $discounted_price + ((float) $rule['adjustment'] / $adjusted_qnty);
-							}
-						} else {
-							$object_hash = spl_object_hash($product);
-							$object_hash = $object_hash . $pid;
-							$r_price     = $objRulesValidator->elex_dp_execute_rule($discounted_price, $rule_type_colon_rule_no, $rule, $repeat_qnty, $pid, $object_hash);
-							//error_log("$total_price = $r_price * $times * $repeat_qnty");
-							$total_price    = $r_price * $times * $repeat_qnty;
-							$remaining_qnty = $current_quantity - ($times * $repeat_qnty);
-							if ($remaining_qnty > 0) {
-								$price = isset($xa_cart_price[$pid]) ? $xa_cart_price[$pid] : 0;
-								$total_price = $total_price + ($remaining_qnty * $price);
-							}
-							$discounted_price = $total_price / $current_quantity;
-						}
-					} else {
-						if ($this->debug_mode) {
-							error_log(str_repeat('>', 208));
-							error_log('Executing Rule:' . $rule_type_colon_rule_no);
-						}
-						//fix for best discount mode flat discount is not getting calculated]
-
-						// if (!empty($rule['discount_type']) && $rule['discount_type'] == 'Flat Discount') { // removed variation condition because variations were getting executed like non flat discounts
-						// 	if ($rule['rule_type'] == 'product_rules') {
-						// 		$xa_common_flat_discount[$rule['rule_type'] . ':' . $rule['rule_no'] . ':' . $pid] = floatval($rule['value']);
-						// 	} elseif ($rule['rule_type'] == 'category_rules') {
-						// 		$cid = !empty($rule['selected_cids']) ? current($rule['selected_cids']) : '';
-						// 		$xa_common_flat_discount[$rule['rule_type'] . ':' . $rule['rule_no'] . ':' . $cid] = floatval($rule['value']);
-						// 	} else {
-						// 		$xa_common_flat_discount[$rule['rule_type'] . ':' . $rule['rule_no']] = floatval($rule['value']);
-						// 	}
-						// 	if (!empty($rule['adjustment'])) {
-						// 		$adjusted_qnty    = !empty($objRulesValidator->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']]) ? $objRulesValidator->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] : $current_quantity;
-						// 		$discounted_price = $discounted_price + ((float) $rule['adjustment'] / $adjusted_qnty);
-						// 	}
-						// } else {
-
-							$object_hash      = spl_object_hash($product);
-							$object_hash      = $object_hash . $pid;
-							$discounted_price = $objRulesValidator->elex_dp_execute_rule($discounted_price, $rule_type_colon_rule_no, $rule, $current_quantity, $pid, $object_hash);
-						}
-					// }
+					$object_hash = spl_object_hash($product) . $pid;
+					$discounted_price = $objRulesValidator->elex_dp_execute_rule($discounted_price, $rule_type_colon_rule_no, $rule, $current_quantity, $pid, $object_hash);
 					if ($rule['rule_type'] != 'BOGO_category_rules' && $rule['rule_type'] != 'buy_get_free_rules' && $rule['rule_type'] != 'bogo_tag_rules') {
 						$product->set_price($discounted_price);
-					}
-
-					//Calculating the valid flat discounts.
-					$key = $rule['rule_type'] . ':' . $rule['rule_no'] . ':' . $pid;
-					if($xa_common_flat_discount && array_key_exists($key, $xa_common_flat_discount)){
-						$valid_flat_discount[$key] = $key;
-					}
-				}
-				if($xa_common_flat_discount){
-					foreach($xa_common_flat_discount as $key => $value){
-						$key_parts = explode(':', $key);
-						$current_pid = end($key_parts);
-						if(!array_key_exists($key, $valid_flat_discount) && ($current_pid == $pid)){
-							unset($xa_common_flat_discount[$key]);
-						}
 					}
 				}
 			} else {
 				foreach ($xa_common_flat_discount as $key => $value) {
 					$key_parts = explode(':', $key);
-					$current_pid = end($key_parts);
-					if ($current_pid == $pid) {
+					if (end($key_parts) == $pid) {
 						unset($xa_common_flat_discount[$key]);
 					}
 				}
 			}
+			   
+			   
 		}
-		$elex_dp_cached_prices[$product->get_id()][current_filter()] = $discounted_price;
-		add_filter($xa_hooks['woocommerce_get_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);         // update sale price on product page
-		add_filter($xa_hooks['woocommerce_get_sale_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-		add_filter('woocommerce_product_variation_get_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-		add_filter('woocommerce_product_variation_get_sale_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
-		if (((current_filter() == $xa_hooks['woocommerce_get_sale_price_hook_name']) || (current_filter() == 'woocommerce_product_variation_get_sale_price')) && ($regular_price == $discounted_price)) {  // if sale price is empty then old price is regular_price
-			return '';
+		if ( empty( get_transient('elex_dp_product_data_' . $product_id) ) ) {
+			set_transient( 'elex_dp_product_data_' . $product_id, $discounted_price );
 		}
-		return $discounted_price;
+		   $cached_prices[$product_id][current_filter()] = $discounted_price;
+   
+		   // Restore hooks
+		   $this->manageHooks(true);
+			   
+		   return ( in_array(current_filter(), array($xa_hooks['woocommerce_get_sale_price_hook_name'], 'woocommerce_product_variation_get_sale_price')) && $regular_price == $discounted_price ) ? '' : $discounted_price;
+	}
+   
+	  // Helper method to manage hooks
+	public function manageHooks( $add) {
+		global $xa_hooks;
+   
+		$action = $add ? 'add_filter' : 'remove_filter';
+		$priority = 22;
+	   
+		$filters = [
+		$xa_hooks['woocommerce_get_price_hook_name'],
+		$xa_hooks['woocommerce_get_sale_price_hook_name'],
+		'woocommerce_product_variation_get_price',
+		'woocommerce_product_variation_get_sale_price'
+		];
+   
+		foreach ($filters as $filter) {
+			$action($filter, [$this, 'elex_dp_getDiscountedPriceForProduct'], $priority, 2);
+		}
 	}
 
-	public function elex_dp_getDiscountedPriceHTML($price, $product)
-	{
+	public function elex_dp_getDiscountedPriceHTML( $price, $product) {
 		// hooked to get_price_html filter
 		if ($product->is_type('simple') || $product->is_type('variation')) {
 			return $this->elex_dp_getDiscountedPriceHTML_for_simple_product($price, $product);
@@ -397,14 +281,12 @@ class Elex_NewCalculationHandler
 		return $price;
 	}
 
-	public function elex_dp_getDiscountedPriceHTML_for_simple_product($price, $product)
-	{
+	public function elex_dp_getDiscountedPriceHTML_for_simple_product( $price, $product) {
 		// hooked to get_price_html filter
 		return $price;
 	}
 
-	public function elex_dp_getDiscountedPriceHTML_for_group_product($price, $product)
-	{
+	public function elex_dp_getDiscountedPriceHTML_for_group_product( $price, $product) {
 		// hooked to get_price_html filter
 		$tax_display_mode = get_option('woocommerce_tax_display_shop');
 		$child_prices     = array();
@@ -412,7 +294,7 @@ class Elex_NewCalculationHandler
 		foreach ($product->get_children() as $child_id) {
 			$child = wc_get_product($child_id);
 			//$child_prices[] = 'incl' === $tax_display_mode ? wc_get_price_including_tax($child) : wc_get_price_excluding_tax($child);
-			if($child) {
+			if ($child) {
 				if ($child->is_type('variable')) {
 					$prices = $child->get_variation_prices(true);
 
@@ -440,7 +322,7 @@ class Elex_NewCalculationHandler
 
 		if ('' !== $min_price) {
 			$price   = $min_price !== $max_price ? sprintf(_x('%1$s&ndash;%2$s', 'Price range: from-to', 'woocommerce'), wc_price($min_price), wc_price($max_price)) : wc_price($min_price);
-			$is_free = (0 == $min_price && 0 == $max_price);
+			$is_free = ( 0 == $min_price && 0 == $max_price );
 
 			if ($is_free) {
 				$price = apply_filters('woocommerce_grouped_free_price_html', __('Free!', 'woocommerce'), $product);
@@ -454,8 +336,7 @@ class Elex_NewCalculationHandler
 		return $price;
 	}
 
-	public function elex_dp_getDiscountedPriceHTML_for_variable_product($price, $product)
-	{
+	public function elex_dp_getDiscountedPriceHTML_for_variable_product( $price, $product) {
 		// hooked to get_price_html filter
 		$prices               = array();
 		$childrens            = array();

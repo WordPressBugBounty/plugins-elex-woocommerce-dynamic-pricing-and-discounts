@@ -393,7 +393,7 @@ function elex_dp_init_wc_functions() {
 			if ($product->is_type('variation')) {
 				$parent_id =$product->get_parent_id();
 				$parent_tags = get_the_terms($parent_id, 'product_tag');
-				if($parent_tags){
+				if ($parent_tags) {
 					foreach ($parent_tags as $key => $parent_tag) {
 						array_push($tags_ids_array, $parent_tag->term_id);
 					}

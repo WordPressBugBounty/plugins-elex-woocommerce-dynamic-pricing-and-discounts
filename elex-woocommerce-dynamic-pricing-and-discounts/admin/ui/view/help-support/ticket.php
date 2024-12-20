@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 <div class="p-1 fw-bold">
 	<p><?php esc_html_e('Before raising the ticket, we recommend you to go through our', 'eh-dynamic-pricing-discounts'); ?>
-       <a href="<?php echo esc_url('https://elextensions.com/knowledge-base/set-up-elex-dynamic-pricing-and-discounts-plugin-for-woocommerce/'); ?>" target="_blank"><?php esc_html_e('detailed documentation.', 'eh-dynamic-pricing-discounts'); ?></a></p>
+	   <a href="<?php echo esc_url('https://elextensions.com/knowledge-base/set-up-elex-dynamic-pricing-and-discounts-plugin-for-woocommerce/'); ?>" target="_blank"><?php esc_html_e('detailed documentation.', 'eh-dynamic-pricing-discounts'); ?></a></p>
 	<p><?php esc_html_e('Or', 'eh-dynamic-pricing-discounts'); ?></p>
 	<p class="mb-0"><?php esc_html_e('To get in touch with our helpdesk representative. Just raise a support ticket on our website.', 'eh-dynamic-pricing-discounts'); ?></p>
 	<div class="text-danger fw-normal"><small><?php esc_html_e('*Please don\'t forget to attach your System info, Error log & Debug File with the request for better support.', 'eh-dynamic-pricing-discounts'); ?></small></div>
@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
 </div>
 <script>
 	jQuery(document).ready(function() {
-    
+	
 		if (hasURLKey('downloadfailure')) {
 			showSuccessNotification('downloadfailure');
 		}

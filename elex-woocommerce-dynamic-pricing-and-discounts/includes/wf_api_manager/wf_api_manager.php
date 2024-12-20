@@ -15,22 +15,22 @@ require 'class-wc-am-plugin-update.php';
 
 class WF_API_Manager {
 	private $is_ajax;
-    private $upgrade_url;
-    private $plugin_name;
-    private $product_id;
-    private $api_key;
-    private $activation_unique_product_id;
-    private $renew_license_url;
-    private $instance;
-    private $domain;
-    private $software_version;
-    private $wf_unique_product_id_key;
-    private $wf_api_licence_key;
-    private $wf_instance_key;
-    private $plugin_settings_url;
-    private $plugin_or_theme;
-    private $text_domain;
-    private $extra;
+	private $upgrade_url;
+	private $plugin_name;
+	private $product_id;
+	private $api_key;
+	private $activation_unique_product_id;
+	private $renew_license_url;
+	private $instance;
+	private $domain;
+	private $software_version;
+	private $wf_unique_product_id_key;
+	private $wf_api_licence_key;
+	private $wf_instance_key;
+	private $plugin_settings_url;
+	private $plugin_or_theme;
+	private $text_domain;
+	private $extra;
 	
 	public function __construct( $product_id, $plugin_version, $plugin_slug, $server_url, $plugin_settings_url = '' ) {
 		$this->wf_unique_product_id_key = $product_id . '_unique_product_id';

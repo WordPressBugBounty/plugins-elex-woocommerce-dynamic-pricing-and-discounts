@@ -60,7 +60,7 @@ ob_start();
 		$rules_validator = new Elex_RulesValidator('all_match', true, 'product_rules');
 		//checking if product rules are enabled on settings page
 		global $xa_dp_setting;
-		if (!empty($xa_dp_setting['product_rules_on_off']) && ('enable' !== $xa_dp_setting['product_rules_on_off'])) {
+		if (!empty($xa_dp_setting['product_rules_on_off']) && ( 'enable' !== $xa_dp_setting['product_rules_on_off'] )) {
 			$product_rules = array();
 		} else {
 			$product_rules = $rules_validator->elex_dp_getValidRulesForProduct($product, elex_dp_get_pid($product), 1);  // this will calculate all valid rules and assign to $offers
@@ -97,7 +97,7 @@ ob_start();
 					echo "<tr  class='xa_sp_table_body_row' style='font-size:14px; font-family: Verdana;'>";
 					echo "<td class='xa_sp_table_cell'> " . esc_attr($rule['min']) . esc_html(__($unit, 'eh-dynamic-pricing-discounts')) . ' </td>';
 					echo "<td class='xa_sp_table_cell'>";
-					echo (isset($rule['max']) ? esc_html($rule['max']) : '-');
+					echo ( isset($rule['max']) ? esc_html($rule['max']) : '-' );
 					echo ' ' . esc_html(__(isset($rule['max']) ? $unit : ' ', 'eh-dynamic-pricing-discounts')) . '</td>';
 					$currency_pos = get_option('woocommerce_currency_pos');
 					echo "<td class='xa_sp_table_cell'>";

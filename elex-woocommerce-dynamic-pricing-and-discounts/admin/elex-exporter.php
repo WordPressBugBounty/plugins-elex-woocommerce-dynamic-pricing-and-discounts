@@ -7,7 +7,16 @@ if (!defined('ABSPATH')) {
 add_action('admin_init', 'elex_dp_export_rules');
 
 function elex_dp_export_rules() {
-
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+	
+	if ( isset($_POST['eha-export']) && ( !isset($_POST['eha_export_nonce']) || !wp_verify_nonce($_POST['eha_export_nonce'], 'eha_export_nonce') ) ) {
+		// Nonce is invalid or not present
+		wp_safe_redirect(admin_url('admin.php?page=dp-import-export-page&nonce_verification_failed'));
+		return false;
+	
+	}
 	if (isset($_POST['eha-export'])) {
 		if (isset($_POST['export_type']) && ( $_POST['export_type'] == 'eha-export-json' )) {
 
@@ -15,11 +24,11 @@ function elex_dp_export_rules() {
 			$tab_c = $_POST['export_tab'];
 
 			$file_rule = $tab_c;
-			if($tab_c == 'combinational_rules'){
+			if ($tab_c == 'combinational_rules') {
 				$file_rule = 'multi_product_rules';
-			}else if($tab_c == 'cat_combinational_rules'){
+			} else if ($tab_c == 'cat_combinational_rules') {
 				$file_rule = 'multi_category_rules';
-			}else if($tab_c == 'buy_get_free_rules'){
+			} else if ($tab_c == 'buy_get_free_rules') {
 				$file_rule = 'bogo_product_rules';
 			}
 
@@ -45,11 +54,11 @@ function elex_dp_export_rules() {
 			$tab_c = $_POST['export_tab'];
 
 			$file_rule = $tab_c;
-			if($tab_c == 'combinational_rules'){
+			if ($tab_c == 'combinational_rules') {
 				$file_rule = 'multi_product_rules';
-			}else if($tab_c == 'cat_combinational_rules'){
+			} else if ($tab_c == 'cat_combinational_rules') {
 				$file_rule = 'multi_category_rules';
-			}else if($tab_c == 'buy_get_free_rules'){
+			} else if ($tab_c == 'buy_get_free_rules') {
 				$file_rule = 'bogo_product_rules';
 			}
 
@@ -82,7 +91,7 @@ function elex_dp_export_rules() {
 						}
 						$line[] ="[$tmp]";
 					} else {
-						if($v){
+						if ($v) {
 							$v      = str_replace(',', '&comma', $v);
 						}
 						$line[] =$v;
@@ -99,14 +108,14 @@ function elex_dp_export_rules() {
 			return false;
 		}
 	}
-    if (isset($_POST['system-info-export'])) {
-        $Info = phpinfo(1);
-		if($Info){
+	if (isset($_POST['system-info-export'])) {
+		$Info = phpinfo(1);
+		if ($Info) {
 			nocache_headers();
 			header('Content-Type: application/html; charset=utf-8');
 			header('Content-Disposition: attachment; filename= System-info-export-' . date('d-M-Y') . '.html');
 			header('Expires: 0');
-			echo ($Info);
+			echo ( $Info );
 			exit;
 		} else {
 			wp_safe_redirect(admin_url('admin.php?page=dp-help-and-support-page&tab=ticket&downloadfailure'));

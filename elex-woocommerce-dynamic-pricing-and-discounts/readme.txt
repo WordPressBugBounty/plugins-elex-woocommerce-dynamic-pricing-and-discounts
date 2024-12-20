@@ -4,7 +4,7 @@ Tags: Dynamic Pricing,Dynamic Discount,Price Rule,Bulk Discount, WooCommerce
 Requires at least: 3.0.1
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.1.7
+Stable tag: 2.1.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,12 @@ If you are facing any issues, please create a topic at plugin support section on
 3. That's it - you can now configure the plugin.
 
 == Changelog ==
+= 2.1.8 =
+* Made compatible with WooCommerce 9.5
+* Corrected a vulnerability issue using Wordfence
+* Optimized code to improve loading time
+* Fixed an issue where the discount did not update when reducing the quantity
+
 = 2.1.7 =
 * Made compatible with WordPress 6.7
 * Made compatible with WooCommerce 9.4
@@ -290,6 +296,12 @@ If you are facing any issues, please create a topic at plugin support section on
 * Product Rules,Combinational Rules,Category Rules,Cart Rules.
 
 == Upgrade Notice ==
+= 2.1.8 =
+* Made compatible with WooCommerce 9.5
+* Corrected a vulnerability issue using Wordfence
+* Optimized code to improve loading time
+* Fixed an issue where the discount did not update when reducing the quantity
+
 = 2.1.7 =
 * Made compatible with WordPress 6.7
 * Made compatible with WooCommerce 9.4

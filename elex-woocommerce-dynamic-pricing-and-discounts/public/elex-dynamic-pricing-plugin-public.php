@@ -9,9 +9,8 @@ require 'elex-new-calculation-handler.php';
 add_action('wp_loaded', 'elex_dp_init_calculator');
 $GLOBALS['elex_dp_settings'] = get_option('xa_dynamic_pricing_setting');
 add_action('wp_footer', 'elex_dp_print_scripts_payment_gateway', 5);
-function elex_dp_print_scripts_payment_gateway()
-{
-?>
+function elex_dp_print_scripts_payment_gateway() {
+	?>
 	<script>
 		jQuery(function($) {
 			"use strict";
@@ -29,8 +28,7 @@ function elex_dp_print_scripts_payment_gateway()
 	</script>
 <?php
 }
-function elex_dp_init_calculator()
-{
+function elex_dp_init_calculator() {
 	$xa_dp_rules = get_option('xa_dp_rules', array());
 	if (isset($GLOBALS['elex_dp_settings']) && empty($GLOBALS['elex_dp_settings']) || empty($xa_dp_rules)) {
 		return;
@@ -45,9 +43,16 @@ function elex_dp_init_calculator()
 	add_action('woocommerce_cart_calculate_fees', 'elex_dp_calculate_and_apply_discount_and_add_fee');
 	add_action('woocommerce_before_calculate_totals', 'elex_dp_update_globals');
 
+	add_action('woocommerce_before_cart_totals', 'elex_dp_update_cart_total');
 
-	function elex_dp_update_globals($cart)
-	{
+	function elex_dp_update_cart_total() {
+		global $woocommerce;
+		if ($woocommerce->cart) {
+			$woocommerce->cart->calculate_totals();
+		}
+	}
+
+	function elex_dp_update_globals( $cart) {
 		if (isset($_REQUEST['debugcart'])) {
 			echo '<pre>';
 			print_r($cart);
@@ -100,12 +105,12 @@ function elex_dp_init_calculator()
 				$xa_cart_tags[$_pid]       = xa_get_tag_ids($prod);
 			}
 			foreach ($xa_cart_categories[$_pid] as $_cid) {
-				$xa_cart_categories_items[$_cid] = isset($xa_cart_categories_items[$_cid]) ? ($xa_cart_categories_items[$_cid] + 1) : 1;
-				$xa_cart_categories_units[$_cid] = isset($xa_cart_categories_units[$_cid]) ? ($xa_cart_categories_units[$_cid] + $_qnty) : $_qnty;
+				$xa_cart_categories_items[$_cid] = isset($xa_cart_categories_items[$_cid]) ? ( $xa_cart_categories_items[$_cid] + 1 ) : 1;
+				$xa_cart_categories_units[$_cid] = isset($xa_cart_categories_units[$_cid]) ? ( $xa_cart_categories_units[$_cid] + $_qnty ) : $_qnty;
 			}
 			foreach ($xa_cart_tags[$_pid] as $_tid) {
-				$xa_cart_tags_items[$_tid] = isset($xa_cart_tags_items[$_tid]) ? ($xa_cart_tags_items[$_tid] + 1) : 1;
-				$xa_cart_tags_units[$_tid] = isset($xa_cart_tags_units[$_tid]) ? ($xa_cart_tags_units[$_tid] + $_qnty) : $_qnty;
+				$xa_cart_tags_items[$_tid] = isset($xa_cart_tags_items[$_tid]) ? ( $xa_cart_tags_items[$_tid] + 1 ) : 1;
+				$xa_cart_tags_units[$_tid] = isset($xa_cart_tags_units[$_tid]) ? ( $xa_cart_tags_units[$_tid] + $_qnty ) : $_qnty;
 			}
 		}
 	}
@@ -120,8 +125,7 @@ function elex_dp_init_calculator()
 
 	add_filter('woocommerce_product_is_on_sale', 'elex_dp_product_is_on_sale', 99, 2);
 
-	function elex_dp_product_is_on_sale($on_sale, $product)
-	{
+	function elex_dp_product_is_on_sale( $on_sale, $product) {
 
 		if ($product->is_type('grouped') || $product->is_type('variable')) {
 			$childrens = $product->get_children();
@@ -171,8 +175,7 @@ function elex_dp_init_calculator()
 
 }
 
-function elex_dp_calculate_and_apply_discount_and_add_fee()
-{
+function elex_dp_calculate_and_apply_discount_and_add_fee() {
 	global $xa_common_flat_discount;
 	global $woocommerce;
 	$total_flat_discount = 0;
@@ -191,8 +194,7 @@ function elex_dp_calculate_and_apply_discount_and_add_fee()
 $pricing_table_hook = isset($GLOBALS['elex_dp_settings']['pricing_table_position']) ? $GLOBALS['elex_dp_settings']['pricing_table_position'] : 'woocommerce_before_add_to_cart_button';
 add_action($pricing_table_hook, 'elex_dp_show_pricing_table', 40);
 
-function elex_dp_show_pricing_table()
-{
+function elex_dp_show_pricing_table() {
 	$selected_role = get_option('elex_dp_allowed_roles_to_show_pricing_table');
 	if (!empty($selected_role)) {
 		$user = wp_get_current_user();
@@ -209,8 +211,7 @@ function elex_dp_show_pricing_table()
 $offer_table_hook = isset($GLOBALS['elex_dp_settings']['offer_table_position']) ? $GLOBALS['elex_dp_settings']['offer_table_position'] : 'woocommerce_before_add_to_cart_button';
 add_action($offer_table_hook, 'elex_dp_show_offer_table', 40);
 
-function elex_dp_show_offer_table()
-{
+function elex_dp_show_offer_table() {
 	$path = dirname(__FILE__) . '/elex-single-product-offer-table.php';
 	if (isset($GLOBALS['elex_dp_settings']['offer_table_on_off']) && $GLOBALS['elex_dp_settings']['offer_table_on_off'] == 'enable' && file_exists($path) == true) {
 		include 'elex-single-product-offer-table.php';
@@ -219,8 +220,7 @@ function elex_dp_show_offer_table()
 
 add_filter('woocommerce_cart_item_price', 'elex_dp_show_discount_on_line_item', 100, 2);
 
-function elex_dp_show_discount_on_line_item($price, $cart_item)
-{
+function elex_dp_show_discount_on_line_item( $price, $cart_item) {
 	$prod  = $cart_item['data'];
 	$price = $prod->get_price_html();
 	return $price;
@@ -228,8 +228,7 @@ function elex_dp_show_discount_on_line_item($price, $cart_item)
 
 add_action('wc_ajax_get_refreshed_fragments', 'elex_dp_wc_ajax_get_refreshed_fragments', 1);
 
-function elex_dp_wc_ajax_get_refreshed_fragments()
-{
+function elex_dp_wc_ajax_get_refreshed_fragments() {
 	global $woocommerce;
 	if ($woocommerce->cart) {
 		$woocommerce->cart->calculate_totals();
@@ -237,8 +236,49 @@ function elex_dp_wc_ajax_get_refreshed_fragments()
 }
 
 // Exclude discount from taxes
-function excludeCartFeesTaxes($taxes, $fee, $cart)
-{
+function excludeCartFeesTaxes( $taxes, $fee, $cart) {
 	return [];
 }
-add_action('woocommerce_cart_totals_get_fees_from_cart_taxes', 'excludeCartFeesTaxes', 10 ,3);
+add_action('woocommerce_cart_totals_get_fees_from_cart_taxes', 'excludeCartFeesTaxes', 10 , 3);
+
+add_action('save_post_product', 'delete_product_transient_on_price_update', 10, 3);
+
+function delete_product_transient_on_price_update( $post_id, $post, $update) {
+
+	global $wpdb;
+	// Specify the transient key pattern
+	$transient_key_pattern = 'elex_dp_product_data_' . $post_id;
+
+	$wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
+			'_transient_%' . $transient_key_pattern,
+			'_transient_timeout_%' . $transient_key_pattern
+		)
+	);
+
+	// Clear the object cache
+	wp_cache_flush();
+
+}
+
+add_action('woocommerce_update_product_variation', 'delete_variation_transient_on_price_update', 10, 1);
+
+function delete_variation_transient_on_price_update( $variation_id) {
+
+	global $wpdb;
+	// Specify the transient key pattern for the variation
+	$transient_key_pattern = 'elex_dp_product_data_' . $variation_id;
+
+	$wpdb->query(
+		$wpdb->prepare(
+			"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
+			'_transient_%' . $transient_key_pattern,
+			'_transient_timeout_%' . $transient_key_pattern
+		)
+	);
+
+	// Clear the object cache
+	wp_cache_flush();
+
+}

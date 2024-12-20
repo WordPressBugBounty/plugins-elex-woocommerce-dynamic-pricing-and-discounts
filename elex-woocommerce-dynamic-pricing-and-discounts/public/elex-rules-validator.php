@@ -5,8 +5,8 @@
  *
  * @author Akshay
  */
-class Elex_RulesValidator
-{
+class Elex_RulesValidator {
+
 
 	public $execution_mode      = 'first_match';
 	public $execution_order     = array('product_rules', 'category_rules');
@@ -21,23 +21,21 @@ class Elex_RulesValidator
 	 *
 	 * @return array $valid_rules
 	 */
-	function __construct($mode = '', $for_offers_table = false, $only_execute_this_mode = '')
-	{
+	function __construct( $mode = '', $for_offers_table = false, $only_execute_this_mode = '') {
 		global $xa_dp_setting;
 
 		$this->for_offers_table = $for_offers_table;
 		$this->execution_mode   = empty($mode) ? $xa_dp_setting['mode'] : $mode;
-		$this->execution_order  = empty($only_execute_this_mode) ? (isset($xa_dp_setting['execution_order']) ? $xa_dp_setting['execution_order'] : array(
+		$this->execution_order  = empty($only_execute_this_mode) ? ( isset($xa_dp_setting['execution_order']) ? $xa_dp_setting['execution_order'] : array(
 			'product_rules',
 			'category_rules'
-		)) : array($only_execute_this_mode);
+		) ) : array($only_execute_this_mode);
 	}
 	/**
 	 * Function which converts product and category id's based on current language selected by user
 	 */
 
-	public function elex_dp_getValidRulesForProduct($product, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	public function elex_dp_getValidRulesForProduct( $product, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 		if (empty($pid)) {
 			$pid = elex_dp_get_pid($product);
 		}
@@ -57,32 +55,30 @@ class Elex_RulesValidator
 	}
 
 
-	function elex_dp_getFirstMatchedRule($product, $pid, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_getFirstMatchedRule( $product, $pid, $current_quantity = 1, $price = 0, $weight = 0) {
 		global $xa_dp_rules, $xa_first_match_rule_executed;
 		//if(!$xa_first_match_rule_executed)
 		{
-			foreach ($this->execution_order as $rule_type) {
-				$rules = !empty($xa_dp_rules[$rule_type]) ? $xa_dp_rules[$rule_type] : array();
-				foreach ($rules as $rule_no => $rule) {
-					//print_r($rule_type.'->'.$rule_no." pid=".$pid);
-					$rule['rule_no']   = $rule_no;
-					$rule['rule_type'] = $rule_type;
-					if ($this->elex_dp_checkRuleApplicableForProduct($rule, $rule_type, $product, $pid, $current_quantity, $price, $weight) === true) {
-						if ($rule_type == 'product_rules') {
-							$xa_first_match_rule_executed = true;
-						}
-						//error_log('type='.$rule_type.' ruleno='.$rule_no.' pid='.$pid);
-						return array($rule_type . ':' . $rule_no => $rule);
+		foreach ($this->execution_order as $rule_type) {
+			$rules = !empty($xa_dp_rules[$rule_type]) ? $xa_dp_rules[$rule_type] : array();
+			foreach ($rules as $rule_no => $rule) {
+				//print_r($rule_type.'->'.$rule_no." pid=".$pid);
+				$rule['rule_no']   = $rule_no;
+				$rule['rule_type'] = $rule_type;
+				if ($this->elex_dp_checkRuleApplicableForProduct($rule, $rule_type, $product, $pid, $current_quantity, $price, $weight) === true) {
+					if ($rule_type == 'product_rules') {
+						$xa_first_match_rule_executed = true;
 					}
+					//error_log('type='.$rule_type.' ruleno='.$rule_no.' pid='.$pid);
+					return array($rule_type . ':' . $rule_no => $rule);
 				}
 			}
+		}
 		}
 		return array();
 	}
 
-	function elex_dp_getAllMatchedRules($product, $pid, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_getAllMatchedRules( $product, $pid, $current_quantity = 1, $price = 0, $weight = 0) {
 		global $xa_dp_rules;
 		$valid_rules = array();
 		foreach ($this->execution_order as $rule_type) {
@@ -103,8 +99,7 @@ class Elex_RulesValidator
 		return $valid_rules;
 	}
 
-	function elex_dp_getBestMatchedRules($product, $pid, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_getBestMatchedRules( $product, $pid, $current_quantity = 1, $price = 0, $weight = 0) {
 		global $xa_dp_rules;
 		$valid_rules = array();
 		$max_price   = PHP_INT_MIN;
@@ -128,8 +123,7 @@ class Elex_RulesValidator
 		return $valid_rules;
 	}
 
-	public function elex_dp_checkRuleApplicableForProduct(&$rule = null, $rule_type = '', $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	public function elex_dp_checkRuleApplicableForProduct( &$rule = null, $rule_type = '', $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 		if (apply_filters('eha_dp_skip_product', false, $pid, $rule, $rule_type) != false) {
 			return false;
 		}
@@ -164,7 +158,7 @@ class Elex_RulesValidator
 					break;
 			}
 			global $customer;
-			if ((!empty($rule['prev_order_count']) || !empty($rule['prev_order_total_amt'])) && !empty($customer)) {
+			if (( !empty($rule['prev_order_count']) || !empty($rule['prev_order_total_amt']) ) && !empty($customer)) {
 				$order_count = elex_dp_is_wc_version_gt_eql('2.7') ? $customer->get_order_count() : wc_get_customer_order_count($customer->id);
 				$total_spent = elex_dp_is_wc_version_gt_eql('2.7') ? $customer->get_total_spent() : wc_get_customer_total_spent($customer->id);
 				//error_log('order_count='.$order_count." total spent=".$total_spent);
@@ -188,14 +182,13 @@ class Elex_RulesValidator
 		return false;
 	}
 
-	function elex_dp_checkBOGO_RuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkBOGO_RuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 		$rule['purchased_product_id'] = elex_dp_WPML_Compatible_ids($rule['purchased_product_id'], 'product', true);
 		$rule['free_product_id']      = elex_dp_WPML_Compatible_ids($rule['free_product_id'], 'product', true);
 		global $xa_cart_quantities, $xa_cart_price, $xa_dp_setting;
 
 		//If free product is selected
-		if (!isset($rule['set_free_option']) || (isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product')) {
+		if (!isset($rule['set_free_option']) || ( isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product' )) {
 
 			if (empty($rule['purchased_product_id']) || empty($rule['free_product_id'])) {
 				return false;
@@ -236,7 +229,7 @@ class Elex_RulesValidator
 					return false;
 				}
 			}
-			if ((in_array($pid, array_keys($rule['purchased_product_id'])) || in_array($parent_id, array_keys($rule['purchased_product_id']))) || in_array($pid, array_keys($rule['free_product_id']))) {
+			if (( in_array($pid, array_keys($rule['purchased_product_id'])) || in_array($parent_id, array_keys($rule['purchased_product_id'])) ) || in_array($pid, array_keys($rule['free_product_id']))) {
 				$dprice = 0;
 				foreach ($rule['free_product_id'] as $_pid => $_qnty) {
 					// Check if the product is not in the trash
@@ -245,10 +238,10 @@ class Elex_RulesValidator
 						continue;
 					}
 					$_product = wc_get_product( $_pid );
-					if($_product){
+					if ($_product) {
 						$product_price = $_product->get_price();
 						$price_val = !empty($product_price) ? $product_price : 0;
-						$dprice   += ($price_val * $_qnty);
+						$dprice   += ( $price_val * $_qnty );
 					}
 				}
 				if ($this->execution_mode == 'best_discount') {
@@ -280,7 +273,7 @@ class Elex_RulesValidator
 			if ($pid != $product_tosetfree) {
 				return false;
 			}
-			if (in_array($pid, array_keys($rule['purchased_product_id'])) && !($current_quantity > 1) ) {
+			if (in_array($pid, array_keys($rule['purchased_product_id'])) && !( $current_quantity > 1 ) ) {
 				return false;
 			}
 			if ($this->for_offers_table == true) {
@@ -309,9 +302,9 @@ class Elex_RulesValidator
 				}
 			}
 			////////if free product is already in cart with exact quanitty this code will set its price as zero
-			if ((in_array($pid, array_keys($rule['purchased_product_id'])) || in_array($parent_id, array_keys($rule['purchased_product_id'])) || ($pid == $product_tosetfree))) {
+			if (( in_array($pid, array_keys($rule['purchased_product_id'])) || in_array($parent_id, array_keys($rule['purchased_product_id'])) || ( $pid == $product_tosetfree ) )) {
 				$dprice = 0;
-                $dprice = $minvalue;
+				$dprice = $minvalue;
 				if ($this->execution_mode == 'best_discount') {
 					$rule['calculated_discount'] = $dprice;    //to check best descount rule
 				}
@@ -322,8 +315,7 @@ class Elex_RulesValidator
 		//checking roles and tofrom date for which rule is applicable
 		return $this->elex_dp_check_date_range_and_roles($rule, 'buy_get_free_rules');
 	}
-	function elex_dp_checkBOGO_category_RuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkBOGO_category_RuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 
 		$rule['purchased_category_id'] = elex_dp_WPML_Compatible_ids($rule['purchased_category_id'], 'category', true);
 		$rule['free_product_id']       = elex_dp_WPML_Compatible_ids($rule['free_product_id'], 'product', true);
@@ -331,7 +323,7 @@ class Elex_RulesValidator
 		global $xa_cart_categories;
 
 		//If free product is selected
-		if (!isset($rule['set_free_option']) || (isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product')) {
+		if (!isset($rule['set_free_option']) || ( isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product' )) {
 
 			if (empty($rule['purchased_category_id']) || empty($rule['free_product_id'])) {
 				return false;
@@ -348,19 +340,19 @@ class Elex_RulesValidator
 			foreach ($rule['purchased_category_id'] as $_cid => $_qnty_and_checkon) {
 
 				$tmp1 = array_keys($rule['free_product_id']);
-				if (in_array($pid, $tmp1) && in_array($_cid, $product_categories) && $xa_dp_setting['auto_add_free_product_on_off'] != 'on' && !($xa_cart_categories_items[$_cid] > 1) && $current_quantity == 1) {
+				if (in_array($pid, $tmp1) && in_array($_cid, $product_categories) && $xa_dp_setting['auto_add_free_product_on_off'] != 'on' && !( $xa_cart_categories_items[$_cid] > 1 ) && $current_quantity == 1) {
 					$add_if_not_auto = $add_if_not_auto + 1;
 				}
 				$tmp     = explode(':', $_qnty_and_checkon);
 				$_qnty   = !empty($tmp[0]) ? $tmp[0] : 0;
 				$checkon = !empty($tmp[1]) ? $tmp[1] : 'items';
-				if ($checkon == 'items' && (!isset($xa_cart_categories_items[$_cid]) || $xa_cart_categories_items[$_cid] < ($_qnty))) {
+				if ($checkon == 'items' && ( !isset($xa_cart_categories_items[$_cid]) || $xa_cart_categories_items[$_cid] < ( $_qnty ) )) {
 					return false;
-				} elseif ($checkon == 'units' && (!isset($xa_cart_categories_units[$_cid]) || $xa_cart_categories_units[$_cid] < $_qnty)) {
+				} elseif ($checkon == 'units' && ( !isset($xa_cart_categories_units[$_cid]) || $xa_cart_categories_units[$_cid] < $_qnty )) {
 					return false;
 				}
 			}
-			if($add_if_not_auto > 0){
+			if ($add_if_not_auto > 0) {
 				return false;
 			}
 			$dprice = 0;
@@ -368,7 +360,7 @@ class Elex_RulesValidator
 				$_product = wc_get_product( $_pid );
 				$product_price = $_product->get_price();
 				$price_val = !empty($product_price) ? $product_price : 0;
-				$dprice   += ($price_val * $_qnty);
+				$dprice   += ( $price_val * $_qnty );
 			}
 			if ($this->execution_mode == 'best_discount') {
 				$rule['calculated_discount'] = $dprice;    //to check best descount rule
@@ -407,19 +399,19 @@ class Elex_RulesValidator
 			$add_if_not_auto = 0;
 			foreach ($rule['purchased_category_id'] as $_cid => $_qnty_and_checkon) {
 
-				if (($pid == $product_tosetfree) && in_array($_cid, $product_categories) && !($xa_cart_categories_items[$_cid] > 1) && !($current_quantity > 1)) {
+				if (( $pid == $product_tosetfree ) && in_array($_cid, $product_categories) && !( $xa_cart_categories_items[$_cid] > 1 ) && !( $current_quantity > 1 )) {
 					$add_if_not_auto = $add_if_not_auto + 1;
 				}
 				$tmp     = explode(':', $_qnty_and_checkon);
 				$_qnty   = !empty($tmp[0]) ? $tmp[0] : 0;
 				$checkon = !empty($tmp[1]) ? $tmp[1] : 'items';
-				if ($checkon == 'items' && (!isset($xa_cart_categories_items[$_cid]) || $xa_cart_categories_items[$_cid] < ($_qnty))) {
+				if ($checkon == 'items' && ( !isset($xa_cart_categories_items[$_cid]) || $xa_cart_categories_items[$_cid] < ( $_qnty ) )) {
 					return false;
-				} elseif ($checkon == 'units' && (!isset($xa_cart_categories_units[$_cid]) || $xa_cart_categories_units[$_cid] < $_qnty)) {
+				} elseif ($checkon == 'units' && ( !isset($xa_cart_categories_units[$_cid]) || $xa_cart_categories_units[$_cid] < $_qnty )) {
 					return false;
 				}
 			}
-			if($add_if_not_auto > 0){
+			if ($add_if_not_auto > 0) {
 				return false;
 			}
 			$dprice = 0;
@@ -437,15 +429,14 @@ class Elex_RulesValidator
 		return $this->elex_dp_check_date_range_and_roles($rule, 'BOGO_category_rules');
 	}
 
-	function elex_dp_checkbogo_tag_rulesApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkbogo_tag_rulesApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 
 		$rule['purchased_tag_id'] = elex_dp_WPML_Compatible_ids($rule['purchased_tag_id'], 'tag', true);
 		$rule['free_product_id']  = elex_dp_WPML_Compatible_ids($rule['free_product_id'], 'product', true);
 		global $xa_cart_quantities, $xa_cart_price, $xa_cart_tags_items, $xa_cart_tags_units, $xa_dp_setting, $xa_cart_tags;
 
 		//If free product is selected
-		if (!isset($rule['set_free_option']) || (isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product')) {
+		if (!isset($rule['set_free_option']) || ( isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product' )) {
 
 			if (empty($rule['purchased_tag_id']) || empty($rule['free_product_id'])) {
 				return false;
@@ -462,19 +453,19 @@ class Elex_RulesValidator
 			foreach ($rule['purchased_tag_id'] as $_cid => $_qnty_and_checkon) {
 
 				$tmp1 = array_keys($rule['free_product_id']);
-				if (in_array($pid, $tmp1) && in_array($_cid, $product_tags) && $xa_dp_setting['auto_add_free_product_on_off'] != 'on' && !($xa_cart_tags_items[$_cid] > 1) && $current_quantity == 1) {
+				if (in_array($pid, $tmp1) && in_array($_cid, $product_tags) && $xa_dp_setting['auto_add_free_product_on_off'] != 'on' && !( $xa_cart_tags_items[$_cid] > 1 ) && $current_quantity == 1) {
 					$add_if_not_auto = $add_if_not_auto + 1;
 				}
 				$tmp     = explode(':', $_qnty_and_checkon);
 				$_qnty   = !empty($tmp[0]) ? $tmp[0] : 0;
 				$checkon = !empty($tmp[1]) ? $tmp[1] : 'items';
-				if ($checkon == 'items' && (!isset($xa_cart_tags_items[$_cid]) || $xa_cart_tags_items[$_cid] < ($_qnty))) {
+				if ($checkon == 'items' && ( !isset($xa_cart_tags_items[$_cid]) || $xa_cart_tags_items[$_cid] < ( $_qnty ) )) {
 					return false;
-				} elseif ($checkon == 'units' && (!isset($xa_cart_tags_units[$_cid]) || $xa_cart_tags_units[$_cid] < $_qnty)) {
+				} elseif ($checkon == 'units' && ( !isset($xa_cart_tags_units[$_cid]) || $xa_cart_tags_units[$_cid] < $_qnty )) {
 					return false;
 				}
 			}
-			if($add_if_not_auto > 0){
+			if ($add_if_not_auto > 0) {
 				return false;
 			}
 			$dprice = 0;
@@ -482,7 +473,7 @@ class Elex_RulesValidator
 				$_product = wc_get_product( $_pid );
 				$product_price = $_product->get_price();
 				$price_val = !empty($product_price) ? $product_price : 0;
-				$dprice   += ($price_val * $_qnty);
+				$dprice   += ( $price_val * $_qnty );
 			}
 			if ($this->execution_mode == 'best_discount') {
 				$rule['calculated_discount'] = $dprice;    //to check best descount rule
@@ -518,19 +509,19 @@ class Elex_RulesValidator
 			$add_if_not_auto = 0;
 			foreach ($rule['purchased_tag_id'] as $_cid => $_qnty_and_checkon) {
 
-				if (($pid == $product_tosetfree) && in_array($_cid, $product_tags) && !($xa_cart_tags_items[$_cid] > 1) && !($current_quantity > 1)) {
+				if (( $pid == $product_tosetfree ) && in_array($_cid, $product_tags) && !( $xa_cart_tags_items[$_cid] > 1 ) && !( $current_quantity > 1 )) {
 					$add_if_not_auto = $add_if_not_auto + 1;
 				}
 				$tmp     = explode(':', $_qnty_and_checkon);
 				$_qnty   = !empty($tmp[0]) ? $tmp[0] : 0;
 				$checkon = !empty($tmp[1]) ? $tmp[1] : 'items';
-				if ($checkon == 'items' && (!isset($xa_cart_tags_items[$_cid]) || $xa_cart_tags_items[$_cid] < ($_qnty))) {
+				if ($checkon == 'items' && ( !isset($xa_cart_tags_items[$_cid]) || $xa_cart_tags_items[$_cid] < ( $_qnty ) )) {
 					return false;
-				} elseif ($checkon == 'units' && (!isset($xa_cart_tags_units[$_cid]) || $xa_cart_tags_units[$_cid] < $_qnty)) {
+				} elseif ($checkon == 'units' && ( !isset($xa_cart_tags_units[$_cid]) || $xa_cart_tags_units[$_cid] < $_qnty )) {
 					return false;
 				}
 			}
-			if($add_if_not_auto > 0){
+			if ($add_if_not_auto > 0) {
 				return false;
 			}
 			$dprice = 0;
@@ -548,8 +539,7 @@ class Elex_RulesValidator
 		return $this->elex_dp_check_date_range_and_roles($rule, 'bogo_tag_rules');
 	}
 
-	function elex_dp_checkCategoryCombinationalRuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkCategoryCombinationalRuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 
 		global $xa_cart_quantities;
 		global $xa_cart_categories;
@@ -593,21 +583,20 @@ class Elex_RulesValidator
 			$new_price = $this->elex_dp_calculate_discount($price, $rule['rule_no'], $rule, $pid, $current_quantity, true);
 			$_product = wc_get_product($pid);
 			$old_price = $_product->get_price();
-			$rule['calculated_discount'] = ((float)$old_price - (float)$new_price) * $current_quantity;
+			$rule['calculated_discount'] = ( (float) $old_price - (float) $new_price ) * $current_quantity;
 		}
 		//checking roles and tofrom date for which rule is applicable
 		return $this->elex_dp_check_date_range_and_roles($rule, 'cat_combinational_rules');
 	}
 
-	function elex_dp_checkCategoryRuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkCategoryRuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 
 		global $xa_cart_quantities;
 		global $xa_cart_weight;
 		global $xa_cart_price;
 		global $xa_cart_categories;
-		$min = (empty($rule['min']) == true) ? 1 : $rule['min'];
-		$max = (empty($rule['max']) == true) ? 999999999 : $rule['max'];
+		$min = ( empty($rule['min']) == true ) ? 1 : $rule['min'];
+		$max = ( empty($rule['max']) == true ) ? 999999999 : $rule['max'];
 
 		if ($max < $min && $max != 0) {
 			return false;
@@ -655,10 +644,10 @@ class Elex_RulesValidator
 					$total_all_units_of_this_category_in_cart += (float) $qnty;
 				}
 				if (!empty($xa_cart_weight[$_pid])) {
-					$total_weight_of_this_category += (float) ($qnty * $xa_cart_weight[$_pid]);
+					$total_weight_of_this_category += (float) ( $qnty * $xa_cart_weight[$_pid] );
 				}
 				if (!empty($xa_cart_price[$_pid])) {
-					$total_price_of_this_category += (float) ($qnty * $xa_cart_price[$_pid]);
+					$total_price_of_this_category += (float) ( $qnty * $xa_cart_price[$_pid] );
 				}
 			}
 		}
@@ -671,13 +660,13 @@ class Elex_RulesValidator
 		$this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] = $total_all_units_of_this_category_in_cart;   // for adjustment
 		//error_log('total units=' . $total_all_units_of_this_category_in_cart . " total items=" . $total_items_of_this_category_in_cart);
 		//error_log('total price=' . $total_price_of_this_category . " total weights=" . $total_weight_of_this_category);
-		if ($rule['check_on'] == 'TotalQuantity' && ($total_all_units_of_this_category_in_cart < $min || $total_all_units_of_this_category_in_cart > $max || empty($total_all_units_of_this_category_in_cart))) {
+		if ($rule['check_on'] == 'TotalQuantity' && ( $total_all_units_of_this_category_in_cart < $min || $total_all_units_of_this_category_in_cart > $max || empty($total_all_units_of_this_category_in_cart) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Quantity' && ($total_items_of_this_category_in_cart < $min || $total_items_of_this_category_in_cart > $max || empty($total_items_of_this_category_in_cart))) {
+		} elseif ($rule['check_on'] == 'Quantity' && ( $total_items_of_this_category_in_cart < $min || $total_items_of_this_category_in_cart > $max || empty($total_items_of_this_category_in_cart) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Weight' && ($total_weight_of_this_category < $min || $total_weight_of_this_category > $max || empty($total_weight_of_this_category))) {
+		} elseif ($rule['check_on'] == 'Weight' && ( $total_weight_of_this_category < $min || $total_weight_of_this_category > $max || empty($total_weight_of_this_category) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Price' && ($total_price_of_this_category < $min || $total_price_of_this_category > $max || empty($total_price_of_this_category))) {
+		} elseif ($rule['check_on'] == 'Price' && ( $total_price_of_this_category < $min || $total_price_of_this_category > $max || empty($total_price_of_this_category) )) {
 			return false;
 		}
 
@@ -686,22 +675,21 @@ class Elex_RulesValidator
 			$new_price = $this->elex_dp_calculate_discount($price, $rule['rule_no'], $rule, $pid, $current_quantity, true);
 			$_product = wc_get_product($pid);
 			$old_price = $_product->get_price();
-			$rule['calculated_discount'] = ((float)$old_price - (float)$new_price) * $current_quantity;
+			$rule['calculated_discount'] = ( (float) $old_price - (float) $new_price ) * $current_quantity;
 		}
 
 		//checking roles and tofrom date for which rule is applicable
 		return $this->elex_dp_check_date_range_and_roles($rule, 'category_rules');
 	}
 
-	function elex_dp_checkTagRuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkTagRuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 
 		global $xa_cart_quantities;
 		global $xa_cart_weight;
 		global $xa_cart_price;
 		global $xa_cart_tags;
-		$min = (empty($rule['min']) == true) ? 1 : $rule['min'];
-		$max = (empty($rule['max']) == true) ? 999999999 : $rule['max'];
+		$min = ( empty($rule['min']) == true ) ? 1 : $rule['min'];
+		$max = ( empty($rule['max']) == true ) ? 999999999 : $rule['max'];
 
 		if ($max < $min && $max != 0) {
 			return false;
@@ -749,10 +737,10 @@ class Elex_RulesValidator
 					$total_all_units_of_this_tag_in_cart += (int) $qnty;
 				}
 				if (!empty($xa_cart_weight[$_pid])) {
-					$total_weight_of_this_tag += (int) ($qnty * $xa_cart_weight[$_pid]);
+					$total_weight_of_this_tag += (int) ( $qnty * $xa_cart_weight[$_pid] );
 				}
 				if (!empty($xa_cart_price[$_pid])) {
-					$total_price_of_this_tag += (int) ($qnty * $xa_cart_price[$_pid]);
+					$total_price_of_this_tag += (int) ( $qnty * $xa_cart_price[$_pid] );
 				}
 			}
 		}
@@ -765,13 +753,13 @@ class Elex_RulesValidator
 		$this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] = $total_all_units_of_this_tag_in_cart;   // for adjustment
 		//error_log('total units=' . $total_all_units_of_this_tag_in_cart . " total items=" . $total_items_of_this_tag_in_cart);
 		//error_log('total price=' . $total_price_of_this_tag . " total weights=" . $total_weight_of_this_tag);
-		if ($rule['check_on'] == 'TotalQuantity' && ($total_all_units_of_this_tag_in_cart < $min || $total_all_units_of_this_tag_in_cart > $max || empty($total_all_units_of_this_tag_in_cart))) {
+		if ($rule['check_on'] == 'TotalQuantity' && ( $total_all_units_of_this_tag_in_cart < $min || $total_all_units_of_this_tag_in_cart > $max || empty($total_all_units_of_this_tag_in_cart) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Quantity' && ($total_items_of_this_tag_in_cart < $min || $total_items_of_this_tag_in_cart > $max || empty($total_items_of_this_tag_in_cart))) {
+		} elseif ($rule['check_on'] == 'Quantity' && ( $total_items_of_this_tag_in_cart < $min || $total_items_of_this_tag_in_cart > $max || empty($total_items_of_this_tag_in_cart) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Weight' && ($total_weight_of_this_tag < $min || $total_weight_of_this_tag > $max || empty($total_weight_of_this_tag))) {
+		} elseif ($rule['check_on'] == 'Weight' && ( $total_weight_of_this_tag < $min || $total_weight_of_this_tag > $max || empty($total_weight_of_this_tag) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Price' && ($total_price_of_this_tag < $min || $total_price_of_this_tag > $max || empty($total_price_of_this_tag))) {
+		} elseif ($rule['check_on'] == 'Price' && ( $total_price_of_this_tag < $min || $total_price_of_this_tag > $max || empty($total_price_of_this_tag) )) {
 			return false;
 		}
 
@@ -780,25 +768,24 @@ class Elex_RulesValidator
 			$new_price = $this->elex_dp_calculate_discount($price, $rule['rule_no'], $rule, $pid, $current_quantity, true);
 			$_product = wc_get_product($pid);
 			$old_price = $_product->get_price();
-			$rule['calculated_discount'] = ((float)$old_price - (float)$new_price) * $current_quantity;
+			$rule['calculated_discount'] = ( (float) $old_price - (float) $new_price ) * $current_quantity;
 		}
 
 		//checking roles and tofrom date for which rule is applicable
 		return $this->elex_dp_check_date_range_and_roles($rule, 'tag_rules');
 	}
 
-	function elex_dp_checkCartRuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkCartRuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 
 		global $xa_cart_quantities;
 		global $xa_cart_weight;
 		global $xa_cart_price;
-		$min  = (empty($rule['min']) == true) ? 1 : $rule['min'];
-		$max  = (empty($rule['max']) == true) ? 999999999 : $rule['max'];
+		$min  = ( empty($rule['min']) == true ) ? 1 : $rule['min'];
+		$max  = ( empty($rule['max']) == true ) ? 999999999 : $rule['max'];
 		$attr = $product->get_attributes();
 		$attribute_data = array();
 		foreach ($attr as $attribute_name => $attribute) {
-			if(is_object($attribute)) {
+			if (is_object($attribute)) {
 				$attribute_values = $attribute->get_options();
 
 				if (!empty($attribute_values)) {
@@ -811,8 +798,8 @@ class Elex_RulesValidator
 					}
 					$attribute_data[$attribute_name] = $term_slugs;
 				}
-			}else if(is_string($attribute)){
-				$attribute_data[$attribute_name] = (array)$attribute;
+			} else if (is_string($attribute)) {
+				$attribute_data[$attribute_name] = (array) $attribute;
 
 			}
 		}
@@ -880,7 +867,7 @@ class Elex_RulesValidator
 		} // to show in offers table
 		//if pid is selected in this rule
 
-		if (is_cart() && (empty($pid) || !in_array($pid, array_keys($xa_cart_quantities)))) {
+		if (is_cart() && ( empty($pid) || !in_array($pid, array_keys($xa_cart_quantities)) )) {
 			return false;
 		}
 
@@ -902,22 +889,22 @@ class Elex_RulesValidator
 			if (!empty($_qnty)) {
 				$total_all_units_in_cart += $_qnty;
 				if (!empty($xa_cart_weight[$_pid])) {
-					$total_weight_in_cart += ($_qnty * $xa_cart_weight[$_pid]);
+					$total_weight_in_cart += ( $_qnty * $xa_cart_weight[$_pid] );
 				}
 				if (!empty($xa_cart_price[$_pid])) {
-					$total_price_in_cart += ($_qnty * $xa_cart_price[$_pid]);
+					$total_price_in_cart += ( $_qnty * $xa_cart_price[$_pid] );
 				}
 			}
 		}
 		//error_log('total units=' . $total_all_units_of_this_category_in_cart . " total items=" . $total_items_of_this_category_in_cart);
 		//error_log('total price=' . $total_price_of_this_category . " total weights=" . $total_weight_of_this_category);
-		if ($rule['check_on'] == 'TotalQuantity' && ($total_all_units_in_cart < $min || $total_all_units_in_cart > $max || empty($total_all_units_in_cart))) {
+		if ($rule['check_on'] == 'TotalQuantity' && ( $total_all_units_in_cart < $min || $total_all_units_in_cart > $max || empty($total_all_units_in_cart) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Quantity' && ($total_items_in_cart < $min || $total_items_in_cart > $max || empty($total_items_in_cart))) {
+		} elseif ($rule['check_on'] == 'Quantity' && ( $total_items_in_cart < $min || $total_items_in_cart > $max || empty($total_items_in_cart) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Weight' && ($total_weight_in_cart < $min || $total_weight_in_cart > $max || empty($total_weight_in_cart))) {
+		} elseif ($rule['check_on'] == 'Weight' && ( $total_weight_in_cart < $min || $total_weight_in_cart > $max || empty($total_weight_in_cart) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Price' && ($total_price_in_cart < $min || $total_price_in_cart > $max || empty($total_price_in_cart))) {
+		} elseif ($rule['check_on'] == 'Price' && ( $total_price_in_cart < $min || $total_price_in_cart > $max || empty($total_price_in_cart) )) {
 			return false;
 		}
 
@@ -927,14 +914,13 @@ class Elex_RulesValidator
 			$new_price = $this->elex_dp_calculate_discount($price, $rule['rule_no'], $rule, $pid, $current_quantity, true);
 			$_product = wc_get_product($pid);
 			$old_price = $_product->get_price();
-			$rule['calculated_discount'] = ((float)$old_price - (float)$new_price) * $current_quantity;
+			$rule['calculated_discount'] = ( (float) $old_price - (float) $new_price ) * $current_quantity;
 		}
 		//checking roles and tofrom date for which rule is applicable
 		return $this->elex_dp_check_date_range_and_roles($rule, 'cart_rules');
 	}
 
-	function elex_dp_checkCombinationalRuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkCombinationalRuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 		global $xa_cart_quantities;
 		$total_units        = 0;
 		$rule['product_id'] = elex_dp_WPML_Compatible_ids($rule['product_id'], 'product', true);
@@ -964,7 +950,7 @@ class Elex_RulesValidator
 					}
 				}
 			}
-			if ((empty($xa_cart_quantities[$_pid]) || $xa_cart_quantities[$_pid] < $_qnty) && ($total_child_qty == 0 || $total_child_qty < $_qnty)) {
+			if (( empty($xa_cart_quantities[$_pid]) || $xa_cart_quantities[$_pid] < $_qnty ) && ( $total_child_qty == 0 || $total_child_qty < $_qnty )) {
 				if ($_pid != $check_for_pid || empty($xa_cart_quantities[$pid]) || $xa_cart_quantities[$pid] < $_qnty) { //code to consider parent id of variable products
 					return false;
 				} else {
@@ -975,7 +961,7 @@ class Elex_RulesValidator
 			}
 		}
 		$rule['discount_on_product_id'] = elex_dp_WPML_Compatible_ids($rule['discount_on_product_id']);
-		if (!empty($rule['discount_on_product_id']) && is_array($rule['discount_on_product_id']) && (!in_array($pid, $rule['discount_on_product_id']) && !in_array($product->get_parent_id(), $rule['discount_on_product_id']))) {
+		if (!empty($rule['discount_on_product_id']) && is_array($rule['discount_on_product_id']) && ( !in_array($pid, $rule['discount_on_product_id']) && !in_array($product->get_parent_id(), $rule['discount_on_product_id']) )) {
 			return false;
 		}
 		$this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] = $total_units;   // for adjustment
@@ -984,14 +970,13 @@ class Elex_RulesValidator
 			$new_price = $this->elex_dp_calculate_discount($price, $rule['rule_no'], $rule, $pid, $current_quantity, true);
 			$_product = wc_get_product($pid);
 			$old_price = $_product->get_price();
-			$rule['calculated_discount'] = ((float)$old_price - (float)$new_price) * $current_quantity;
+			$rule['calculated_discount'] = ( (float) $old_price - (float) $new_price ) * $current_quantity;
 		}
 		//checking roles and tofrom date for which rule is applicable
 		return $this->elex_dp_check_date_range_and_roles($rule, 'combinational_rules');
 	}
 
-	function elex_dp_checkProductRuleApplicableForProduct(&$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0)
-	{
+	function elex_dp_checkProductRuleApplicableForProduct( &$rule = null, $product = null, $pid = null, $current_quantity = 1, $price = 0, $weight = 0) {
 		global $xa_cart_categories;
 		global $xa_cart_quantities;
 		global $xa_variation_parentid;
@@ -999,10 +984,10 @@ class Elex_RulesValidator
 		if (empty($pid)) {
 			$pid = elex_dp_get_pid($product);
 		}
-		$min          = (empty($rule['min']) == true) ? 1 : $rule['min'];
-		$max          = (empty($rule['max']) == true) ? 999999999 : $rule['max'];
-		$total_price  = !empty($price) ? ($price * $current_quantity) : 0;
-		$total_weight = !empty($weight) ? ((float)$weight * $current_quantity) : 0;
+		$min          = ( empty($rule['min']) == true ) ? 1 : $rule['min'];
+		$max          = ( empty($rule['max']) == true ) ? 999999999 : $rule['max'];
+		$total_price  = !empty($price) ? ( $price * $current_quantity ) : 0;
+		$total_weight = !empty($weight) ? ( (float) $weight * $current_quantity ) : 0;
 		if ($max < $min && $max != 0) {
 			return false;
 		}
@@ -1039,7 +1024,7 @@ class Elex_RulesValidator
 		}
 		if ($rule['rule_on'] == 'products') {
 			$pids = elex_dp_WPML_Compatible_ids($rule['product_id']);
-			if (empty($pids) || (!is_array($pids) || (!in_array($check_for_pid, $pids) && !in_array($pid, $pids)))) {
+			if (empty($pids) || ( !is_array($pids) || ( !in_array($check_for_pid, $pids) && !in_array($pid, $pids) ) )) {
 				return false;
 			}
 		} elseif ($rule['rule_on'] == 'categories') {
@@ -1073,7 +1058,7 @@ class Elex_RulesValidator
 		} // to show in offers table
 		if ($rule['check_on'] == 'Quantity') {
 
-			if (is_cart() && (empty($pid) || !in_array($pid, array_keys($xa_cart_quantities)))) {
+			if (is_cart() && ( empty($pid) || !in_array($pid, array_keys($xa_cart_quantities)) )) {
 				return false;
 			}
 
@@ -1094,17 +1079,17 @@ class Elex_RulesValidator
 			$pids = elex_dp_WPML_Compatible_ids($rule['product_id']);
 			foreach ($xa_cart_quantities as $_pid => $_qnty) {
 				$total_items_in_cart++;
-				if($pids && in_array($_pid, $pids)){
+				if ($pids && in_array($_pid, $pids)) {
 					$total_all_product_items++;
 				}
 			}
 			$rule_product_ids = elex_dp_WPML_Compatible_ids($rule['product_id']);
 
 			//Conditions for different rule type
-			if ('products' === $rule['rule_on'] && in_array($pid, $rule_product_ids) && ($total_all_product_items < $min || ($total_all_product_items > $max && $repeat == false) || empty($total_all_product_items))) {
-                return false;
+			if ('products' === $rule['rule_on'] && in_array($pid, $rule_product_ids) && ( $total_all_product_items < $min || ( $total_all_product_items > $max && $repeat == false ) || empty($total_all_product_items) )) {
+				return false;
 				
-			}else if ('categories' === $rule['rule_on'] && $this->validate_product_matches_categories(wc_get_product($pid), $rule)) {
+			} else if ('categories' === $rule['rule_on'] && $this->validate_product_matches_categories(wc_get_product($pid), $rule)) {
 				$tmp=elex_dp_get_category_ids($pid);
 				$product_categories=!empty($tmp)?$tmp:array();
 				$matched=array_intersect($cids, $product_categories);
@@ -1112,7 +1097,7 @@ class Elex_RulesValidator
 					return false;
 				}
 				foreach ($xa_cart_categories as $_pid => $_categories) {
-					$match=array_intersect($matched,$_categories);
+					$match=array_intersect($matched, $_categories);
 					if (!empty($match)) {
 						$total_items_of_this_category_in_cart++;
 						$qnty=!empty($xa_cart_quantities[$_pid])?$xa_cart_quantities[$_pid]:1;
@@ -1125,18 +1110,18 @@ class Elex_RulesValidator
 					$total_items_of_this_category_in_cart = 1;
 					$total_all_units_of_this_category_in_cart = 1;
 				}
-				if($total_items_of_this_category_in_cart < $min || (($total_items_of_this_category_in_cart > $max && $repeat == false)) || empty($total_items_of_this_category_in_cart)){
-                    return false;
+				if ($total_items_of_this_category_in_cart < $min || ( ( $total_items_of_this_category_in_cart > $max && $repeat == false ) ) || empty($total_items_of_this_category_in_cart)) {
+					return false;
 				}
 
-			}else if (('cart' === $rule['rule_on'])  && ($total_items_in_cart < $min || (($total_items_in_cart > $max && $repeat == false)) || empty($total_items_in_cart))) {
+			} else if (( 'cart' === $rule['rule_on'] )  && ( $total_items_in_cart < $min || ( ( $total_items_in_cart > $max && $repeat == false ) ) || empty($total_items_in_cart) )) {
 				return false;
 			}
-		} elseif ($rule['check_on'] == 'Weight' && ($total_weight < $min || ($total_weight > $max && $repeat == false) || empty($total_weight))) {
+		} elseif ($rule['check_on'] == 'Weight' && ( $total_weight < $min || ( $total_weight > $max && $repeat == false ) || empty($total_weight) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Price' && ($total_price < $min || ($total_price > $max && $repeat == false) || empty($total_price))) {
+		} elseif ($rule['check_on'] == 'Price' && ( $total_price < $min || ( $total_price > $max && $repeat == false ) || empty($total_price) )) {
 			return false;
-		} elseif ($rule['check_on'] == 'Units' && ($current_quantity < $min || ($current_quantity > $max && $repeat == false))) {
+		} elseif ($rule['check_on'] == 'Units' && ( $current_quantity < $min || ( $current_quantity > $max && $repeat == false ) )) {
 			return false;
 		}
 
@@ -1146,14 +1131,13 @@ class Elex_RulesValidator
 			$new_price = $this->elex_dp_calculate_discount($price, $rule['rule_no'], $rule, $pid, $current_quantity, true);
 			$_product = wc_get_product($pid);
 			$old_price = $_product->get_price();
-			$rule['calculated_discount'] = ((float)$old_price - (float)$new_price) * $current_quantity;
+			$rule['calculated_discount'] = ( (float) $old_price - (float) $new_price ) * $current_quantity;
 		}
 		//checking roles and tofrom date for which rule is applicable
 		return $this->elex_dp_check_date_range_and_roles($rule, 'product_rules');
 	}
 
-	function elex_dp_check_date_range_and_roles($rule, $rule_type)
-	{
+	function elex_dp_check_date_range_and_roles( $rule, $rule_type) {
 		$fromdate   = $rule['from_date'];
 		$todate     = $rule['to_date'];
 		$user_roles = $rule['allow_roles'];
@@ -1179,13 +1163,13 @@ class Elex_RulesValidator
 		}
 		$match = array_intersect((array) $user_roles, (array) $current_user->roles);
 		if (!in_array('all', $user_roles) && empty($match) && !empty($user_roles)) {
-			if (!(in_array('guest_user', $user_roles) && !is_user_logged_in())) {
+			if (!( in_array('guest_user', $user_roles) && !is_user_logged_in() )) {
 				return false;
 			}
 		}
 
 		$now = current_time('d-m-Y');
-		if ((empty($fromdate) && empty($todate)) || (empty($fromdate) && empty($todate) == false && (strtotime($now) <= strtotime($todate))) || (empty($fromdate) == false && (strtotime($now) >= strtotime($fromdate)) && empty($todate)) || ((strtotime($now) >= strtotime($fromdate)) && (strtotime($now) <= strtotime($todate)))) {
+		if (( empty($fromdate) && empty($todate) ) || ( empty($fromdate) && empty($todate) == false && ( strtotime($now) <= strtotime($todate) ) ) || ( empty($fromdate) == false && ( strtotime($now) >= strtotime($fromdate) ) && empty($todate) ) || ( ( strtotime($now) >= strtotime($fromdate) ) && ( strtotime($now) <= strtotime($todate) ) )) {
 		} else {
 			return false;
 		}
@@ -1193,8 +1177,7 @@ class Elex_RulesValidator
 		return true;
 	}
 
-	public function elex_dp_execute_rule($old_price, $rule_type_colon_rule_no, $rule, $current_quantity = 1, $pid = 0, $object_hash = '')
-	{
+	public function elex_dp_execute_rule( $old_price, $rule_type_colon_rule_no, $rule, $current_quantity = 1, $pid = 0, $object_hash = '') {
 		global $executed_rule_pid_price, $executed_pids;
 		$new_price = $old_price;
 
@@ -1244,11 +1227,10 @@ class Elex_RulesValidator
 		return $new_price;
 	}
 
-	public function elex_dp_calculate_discount($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false)
-	{
+	public function elex_dp_calculate_discount( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false) {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
 		$new_price           = $old_price;
-		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ($rule['rule_type'] . $pid)   :  $rule['rule_type'];
+		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$cart_quantity       = 0;
 		$prev_total_discount = 0;
 		if ($rule['rule_type'] == 'product_rules') {
@@ -1268,7 +1250,7 @@ class Elex_RulesValidator
 				if ($ppid !== $pid) {
 					$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 					$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-					$prev_total_discount += ($rprice - $sprice) * $qnty;
+					$prev_total_discount += ( $rprice - $sprice ) * $qnty;
 				}
 			}
 		} elseif ($rule['rule_type'] == 'category_rules') {
@@ -1282,7 +1264,7 @@ class Elex_RulesValidator
 					$units                = isset($xa_cart_quantities[$ppid]) ?  $xa_cart_quantities[$ppid] : 0;
 					$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 					$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-					$prev_total_discount += ($rprice - $sprice) * $units;
+					$prev_total_discount += ( $rprice - $sprice ) * $units;
 				}
 			}
 		} elseif ($rule['rule_type'] == 'cat_combinational_rules') {
@@ -1302,7 +1284,7 @@ class Elex_RulesValidator
 		if ($discount_type == 'Percent Discount') {
 			$discount_amt = floatval($value) * floatval($old_price) / 100;
 		} elseif ($discount_type == 'Flat Discount') {
-			if($current_quantity){
+			if ($current_quantity) {
 				if ($do_not_execute === true) {
 					$discount_amt = floatval($value);
 				} else {
@@ -1311,13 +1293,13 @@ class Elex_RulesValidator
 			}
 		} elseif ($discount_type == 'Fixed Price') {
 			$discount_amt = floatval($old_price) - floatval($value);
-		} elseif($discount_type == 'Coupon Discount'){
+		} elseif ($discount_type == 'Coupon Discount') {
 
-			if($rule['coupon_discount_type'] == 'percent'){
+			if ($rule['coupon_discount_type'] == 'percent') {
 
 				$discount_amt = floatval($value) * floatval($old_price) / 100;
-			} elseif ($rule['coupon_discount_type'] == 'fixed_cart'){
-				if($current_quantity){
+			} elseif ($rule['coupon_discount_type'] == 'fixed_cart') {
+				if ($current_quantity) {
 					if ($do_not_execute === true) {
 						$discount_amt = floatval($value);
 					} else {
@@ -1325,7 +1307,7 @@ class Elex_RulesValidator
 					}
 				}
 
-			} elseif ($rule['coupon_discount_type'] == 'fixed_product'){
+			} elseif ($rule['coupon_discount_type'] == 'fixed_product') {
 				$discount_amt = floatval($old_price) - floatval($value);
 			} else {
 				$discount_amt = 0;
@@ -1338,8 +1320,8 @@ class Elex_RulesValidator
 			$total_units = !empty($this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']]) ? $this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] : 1;
 		}
 
-		if (!empty($max_discount) && is_numeric($max_discount) && ((($discount_amt * $cart_quantity) + $prev_total_discount) >= $max_discount)) {
-			$discount_amt = ($max_discount - $prev_total_discount) / $cart_quantity;
+		if (!empty($max_discount) && is_numeric($max_discount) && ( ( ( $discount_amt * $cart_quantity ) + $prev_total_discount ) >= $max_discount )) {
+			$discount_amt = ( $max_discount - $prev_total_discount ) / $cart_quantity;
 		}
 
 		if (isset($adjustment) && is_numeric($adjustment)) {
@@ -1347,8 +1329,8 @@ class Elex_RulesValidator
 			$discount_amt -= $adjustment / $units;
 
 		}
-        if($old_price && $discount_amt){
-			$new_price = (float)$old_price - (float)$discount_amt;
+		if ($old_price && $discount_amt) {
+			$new_price = (float) $old_price - (float) $discount_amt;
 		}
 		if (isset($_GET['debug']) && $do_not_execute == false) {
 			echo "\n<div id='rules_info' style=''><pre> RuleType= " . $rule['rule_type'] . ' |   RuleNo=' . $rule_no . '  |   OldPrice=' . $old_price . "   |   Discount=$discount_amt  NewPrice=$new_price |   OfferName=" . $rule['offer_name'] . '</pre></div>';
@@ -1356,16 +1338,15 @@ class Elex_RulesValidator
 		//// code added to support discount on specified quantity in combinational rules only when it is restricted to discount on $pid
 		if (!empty($rule['discount_on_product_id']) && in_array($pid, $rule['discount_on_product_id']) && !empty($rule['product_id'][$pid]) && !empty($xa_cart_quantities[$pid]) && $rule['product_id'][$pid] < $xa_cart_quantities[$pid]) {
 			$remaining_qnty = $xa_cart_quantities[$pid] - $rule['product_id'][$pid];
-			$new_price      =  (($new_price * $rule['product_id'][$pid]) + ($old_price * $remaining_qnty)) / $xa_cart_quantities[$pid];
+			$new_price      =  ( ( $new_price * $rule['product_id'][$pid] ) + ( $old_price * $remaining_qnty ) ) / $xa_cart_quantities[$pid];
 		}
 		return $new_price;
 	}
 
-	public function elex_dp_SimpleExecute($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '')
-	{
+	public function elex_dp_SimpleExecute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
 		$new_price           = $old_price;
-		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ($rule['rule_type'] . $pid)   :  $rule['rule_type'];
+		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$cart_quantity       = 0;
 		$prev_total_discount = 0;
 		if ($rule['rule_type'] == 'product_rules') {
@@ -1385,7 +1366,7 @@ class Elex_RulesValidator
 				if ($ppid !== $pid) {
 					$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 					$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-					$prev_total_discount += ($rprice - $sprice) * $qnty;
+					$prev_total_discount += ( $rprice - $sprice ) * $qnty;
 				}
 			}
 		} elseif ($rule['rule_type'] == 'category_rules') {
@@ -1399,7 +1380,7 @@ class Elex_RulesValidator
 					$units                = isset($xa_cart_quantities[$ppid]) ?  $xa_cart_quantities[$ppid] : 0;
 					$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 					$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-					$prev_total_discount += ($rprice - $sprice) * $units;
+					$prev_total_discount += ( $rprice - $sprice ) * $units;
 				}
 			}
 		} elseif ($rule['rule_type'] == 'cat_combinational_rules') {
@@ -1419,7 +1400,7 @@ class Elex_RulesValidator
 		if ($discount_type == 'Percent Discount') {
 			$discount_amt = floatval($value) * floatval($old_price) / 100;
 		} elseif ($discount_type == 'Flat Discount') {
-			if($current_quantity){
+			if ($current_quantity) {
 				if ($do_not_execute === true) {
 					$discount_amt = floatval($value);
 				} else {
@@ -1436,8 +1417,8 @@ class Elex_RulesValidator
 			$total_units = !empty($this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']]) ? $this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] : 1;
 		}
 
-		if (!empty($max_discount) && is_numeric($max_discount) && ((($discount_amt * $cart_quantity) + $prev_total_discount) >= $max_discount)) {
-			$discount_amt = ($max_discount - $prev_total_discount) / $cart_quantity;
+		if (!empty($max_discount) && is_numeric($max_discount) && ( ( ( $discount_amt * $cart_quantity ) + $prev_total_discount ) >= $max_discount )) {
+			$discount_amt = ( $max_discount - $prev_total_discount ) / $cart_quantity;
 		}
 
 		if (isset($adjustment) && is_numeric($adjustment)) {
@@ -1452,7 +1433,7 @@ class Elex_RulesValidator
 		//// code added to support discount on specified quantity in combinational rules only when it is restricted to discount on $pid
 		if (!empty($rule['discount_on_product_id']) && in_array($pid, $rule['discount_on_product_id']) && !empty($rule['product_id'][$pid]) && !empty($xa_cart_quantities[$pid]) && $rule['product_id'][$pid] < $xa_cart_quantities[$pid]) {
 			$remaining_qnty = $xa_cart_quantities[$pid] - $rule['product_id'][$pid];
-			$new_price      =  (($new_price * $rule['product_id'][$pid]) + ($old_price * $remaining_qnty)) / $xa_cart_quantities[$pid];
+			$new_price      =  ( ( $new_price * $rule['product_id'][$pid] ) + ( $old_price * $remaining_qnty ) ) / $xa_cart_quantities[$pid];
 		}
 		///// adding to cache
 		if (!isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$object_hash])) {
@@ -1464,11 +1445,10 @@ class Elex_RulesValidator
 		return $new_price;
 	}
 
-	public function elex_dp_Simple_Category_Combinational_Execute($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '')
-	{
+	public function elex_dp_Simple_Category_Combinational_Execute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
 		$new_price           = $old_price;
-		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ($rule['rule_type'] . $pid)   :  $rule['rule_type'];
+		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$prev_total_discount = 0;
 		$cart_quantity       = isset($xa_cart_quantities[$pid]) ?  $xa_cart_quantities[$pid] : 0;
 		$combinational_cids  = array_keys($rule['cat_id']);
@@ -1477,7 +1457,7 @@ class Elex_RulesValidator
 			if ($ppid !== $pid &&  !empty($matched)) {
 				$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 				$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-				$prev_total_discount += ($rprice - $sprice) * $qnty;
+				$prev_total_discount += ( $rprice - $sprice ) * $qnty;
 			}
 		}
 		if (is_product() || is_shop() || is_product_category() || is_product_tag() || empty($cart_quantity)) {
@@ -1488,7 +1468,7 @@ class Elex_RulesValidator
 		if ($discount_type == 'Percent Discount') {
 			$discount_amt = floatval($value) * floatval($old_price) / 100;
 		} elseif ($discount_type == 'Flat Discount') {
-			if($current_quantity){
+			if ($current_quantity) {
 				if ($do_not_execute === true) {
 					$discount_amt = floatval($value);
 				} else {
@@ -1505,8 +1485,8 @@ class Elex_RulesValidator
 			$total_units = !empty($this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']]) ? $this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] : 1;
 		}
 
-		if (!empty($max_discount) && is_numeric($max_discount) && ((($discount_amt * $cart_quantity) + $prev_total_discount) >= $max_discount)) {
-			$discount_amt = ($max_discount - $prev_total_discount) / $cart_quantity;
+		if (!empty($max_discount) && is_numeric($max_discount) && ( ( ( $discount_amt * $cart_quantity ) + $prev_total_discount ) >= $max_discount )) {
+			$discount_amt = ( $max_discount - $prev_total_discount ) / $cart_quantity;
 		}
 
 		if (isset($adjustment) && is_numeric($adjustment)) {
@@ -1521,7 +1501,7 @@ class Elex_RulesValidator
 		//// code added to support discount on specified quantity in combinational rules only when it is restricted to discount on $pid
 		if (!empty($rule['discount_on_product_id']) && in_array($pid, $rule['discount_on_product_id']) && !empty($rule['product_id'][$pid]) && !empty($xa_cart_quantities[$pid]) && $rule['product_id'][$pid] < $xa_cart_quantities[$pid]) {
 			$remaining_qnty = $xa_cart_quantities[$pid] - $rule['product_id'][$pid];
-			$new_price      =  (($new_price * $rule['product_id'][$pid]) + ($old_price * $remaining_qnty)) / $xa_cart_quantities[$pid];
+			$new_price      =  ( ( $new_price * $rule['product_id'][$pid] ) + ( $old_price * $remaining_qnty ) ) / $xa_cart_quantities[$pid];
 		}
 		///// adding to cache
 		if (!isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$object_hash])) {
@@ -1533,11 +1513,10 @@ class Elex_RulesValidator
 		return $new_price;
 	}
 
-	public function elex_dp_Simple_Combinational_Execute($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '')
-	{
+	public function elex_dp_Simple_Combinational_Execute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
 		$new_price           = $old_price;
-		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ($rule['rule_type'] . $pid)   :  $rule['rule_type'];
+		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$prev_total_discount = 0;
 		$cart_quantity       = isset($xa_cart_quantities[$pid]) ?  $xa_cart_quantities[$pid] : 0;
 		$combinational_pids  = array_keys($rule['product_id']);
@@ -1545,7 +1524,7 @@ class Elex_RulesValidator
 			if ($ppid !== $pid && in_array($ppid, $combinational_pids)) {
 				$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 				$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-				$prev_total_discount += ($rprice - $sprice) * $qnty;
+				$prev_total_discount += ( $rprice - $sprice ) * $qnty;
 			}
 		}
 		if (is_product() || is_shop() || is_product_category() || is_product_tag() || empty($cart_quantity)) {
@@ -1556,7 +1535,7 @@ class Elex_RulesValidator
 		if ($discount_type == 'Percent Discount') {
 			$discount_amt = floatval($value) * floatval($old_price) / 100;
 		} elseif ($discount_type == 'Flat Discount') {
-			if($current_quantity){
+			if ($current_quantity) {
 				if ($do_not_execute === true) {
 					$discount_amt = floatval($value);
 				} else {
@@ -1573,8 +1552,8 @@ class Elex_RulesValidator
 			$total_units = !empty($this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']]) ? $this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] : 1;
 		}
 
-		if (!empty($max_discount) && is_numeric($max_discount) && ((($discount_amt * $cart_quantity) + $prev_total_discount) >= $max_discount)) {
-			$discount_amt = ($max_discount - $prev_total_discount) / $cart_quantity;
+		if (!empty($max_discount) && is_numeric($max_discount) && ( ( ( $discount_amt * $cart_quantity ) + $prev_total_discount ) >= $max_discount )) {
+			$discount_amt = ( $max_discount - $prev_total_discount ) / $cart_quantity;
 		}
 
 		if (isset($adjustment) && is_numeric($adjustment)) {
@@ -1590,7 +1569,7 @@ class Elex_RulesValidator
 		if (!empty($rule['discount_on_product_id']) && in_array($pid, $rule['discount_on_product_id']) && !empty($rule['product_id'][$pid]) && !empty($xa_cart_quantities[$pid]) && $rule['product_id'][$pid] < $xa_cart_quantities[$pid]) {
 			// removed this code to make restrictions work for any quantity
 			//$remaining_qnty=$xa_cart_quantities[$pid]-$rule['product_id'][$pid];
-			$new_price =  ($new_price * $rule['product_id'][$pid]); // + ($old_price * $remaining_qnty ))/$xa_cart_quantities[$pid];
+			$new_price =  ( $new_price * $rule['product_id'][$pid] ); // + ($old_price * $remaining_qnty ))/$xa_cart_quantities[$pid];
 		}
 		///// adding to cache
 		if (!isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$object_hash])) {
@@ -1603,11 +1582,10 @@ class Elex_RulesValidator
 	}
 
 
-	public function elex_dp_Simple_Cart_Execute($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '')
-	{
+	public function elex_dp_Simple_Cart_Execute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
 		$new_price           = $old_price;
-		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ($rule['rule_type'] . $pid)   :  $rule['rule_type'];
+		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$cart_quantity       = 0;
 		$prev_total_discount = 0;
 
@@ -1616,7 +1594,7 @@ class Elex_RulesValidator
 			if ($ppid !== $pid) {
 				$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 				$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-				$prev_total_discount += ($rprice - $sprice) * $qnty;
+				$prev_total_discount += ( $rprice - $sprice ) * $qnty;
 			}
 		}
 
@@ -1628,7 +1606,7 @@ class Elex_RulesValidator
 		if ($discount_type == 'Percent Discount') {
 			$discount_amt = floatval($value) * floatval($old_price) / 100;
 		} elseif ($discount_type == 'Flat Discount') {
-			if($current_quantity){
+			if ($current_quantity) {
 				if ($do_not_execute === true) {
 					$discount_amt = floatval($value);
 				} else {
@@ -1645,8 +1623,8 @@ class Elex_RulesValidator
 			$total_units = !empty($this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']]) ? $this->rule_based_quantity[$rule['rule_type'] . ':' . $rule['rule_no']] : 1;
 		}
 
-		if (!empty($max_discount) && is_numeric($max_discount) && ((($discount_amt * $cart_quantity) + $prev_total_discount) >= $max_discount)) {
-			$discount_amt = ($max_discount - $prev_total_discount) / $cart_quantity;
+		if (!empty($max_discount) && is_numeric($max_discount) && ( ( ( $discount_amt * $cart_quantity ) + $prev_total_discount ) >= $max_discount )) {
+			$discount_amt = ( $max_discount - $prev_total_discount ) / $cart_quantity;
 		}
 
 		if (isset($adjustment) && is_numeric($adjustment)) {
@@ -1660,7 +1638,7 @@ class Elex_RulesValidator
 		//// code added to support discount on specified quantity in combinational rules only when it is restricted to discount on $pid
 		if (!empty($rule['discount_on_product_id']) && in_array($pid, $rule['discount_on_product_id']) && !empty($rule['product_id'][$pid]) && !empty($xa_cart_quantities[$pid]) && $rule['product_id'][$pid] < $xa_cart_quantities[$pid]) {
 			$remaining_qnty = $xa_cart_quantities[$pid] - $rule['product_id'][$pid];
-			$new_price      =  (($new_price * $rule['product_id'][$pid]) + ($old_price * $remaining_qnty)) / $xa_cart_quantities[$pid];
+			$new_price      =  ( ( $new_price * $rule['product_id'][$pid] ) + ( $old_price * $remaining_qnty ) ) / $xa_cart_quantities[$pid];
 		}
 		///// adding to cache
 		if (!isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$object_hash])) {
@@ -1673,11 +1651,10 @@ class Elex_RulesValidator
 	}
 
 
-	public function elex_dp_Simple_Category_Execute($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '')
-	{
+	public function elex_dp_Simple_Category_Execute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
 		$new_price           = $old_price;
-		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ($rule['rule_type'] . $pid)   :  $rule['rule_type'];
+		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$cart_quantity       = 0;
 		$prev_total_discount = 0;
 		$total_units         = 0;
@@ -1693,7 +1670,7 @@ class Elex_RulesValidator
 
 				$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 				$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-				$prev_total_discount += ($rprice - $sprice) * $units;
+				$prev_total_discount += ( $rprice - $sprice ) * $units;
 			}
 		}
 
@@ -1709,7 +1686,7 @@ class Elex_RulesValidator
 		if ($discount_type == 'Percent Discount') {
 			$discount_amt = floatval($value) * floatval($old_price) / 100;
 		} elseif ($discount_type == 'Flat Discount') {
-			if($current_quantity){
+			if ($current_quantity) {
 				if ($do_not_execute === true) {
 					$discount_amt = floatval($value);
 				} else {
@@ -1722,8 +1699,8 @@ class Elex_RulesValidator
 			$discount_amt = 0;
 		}
 
-		if (!empty($max_discount) && is_numeric($max_discount) && ((($discount_amt * $cart_quantity) + $prev_total_discount) >= $max_discount)) {
-			$discount_amt = ($max_discount - $prev_total_discount) / $cart_quantity;
+		if (!empty($max_discount) && is_numeric($max_discount) && ( ( ( $discount_amt * $cart_quantity ) + $prev_total_discount ) >= $max_discount )) {
+			$discount_amt = ( $max_discount - $prev_total_discount ) / $cart_quantity;
 		}
 
 		if (isset($adjustment) && is_numeric($adjustment)) {
@@ -1737,7 +1714,7 @@ class Elex_RulesValidator
 		//// code added to support discount on specified quantity in combinational rules only when it is restricted to discount on $pid
 		if (!empty($rule['discount_on_product_id']) && in_array($pid, $rule['discount_on_product_id']) && !empty($rule['product_id'][$pid]) && !empty($xa_cart_quantities[$pid]) && $rule['product_id'][$pid] < $xa_cart_quantities[$pid]) {
 			$remaining_qnty = $xa_cart_quantities[$pid] - $rule['product_id'][$pid];
-			$new_price      =  (($new_price * $rule['product_id'][$pid]) + ($old_price * $remaining_qnty)) / $xa_cart_quantities[$pid];
+			$new_price      =  ( ( $new_price * $rule['product_id'][$pid] ) + ( $old_price * $remaining_qnty ) ) / $xa_cart_quantities[$pid];
 		}
 		///// adding to cache
 		if (!isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$object_hash])) {
@@ -1749,11 +1726,10 @@ class Elex_RulesValidator
 		return $new_price;
 	}
 
-	public function elex_dp_Simple_Tag_Execute($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '')
-	{
+	public function elex_dp_Simple_Tag_Execute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_tags_units, $xa_cart_tags, $xa_cart_price;
 		$new_price           = $old_price;
-		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ($rule['rule_type'] . $pid)   :  $rule['rule_type'];
+		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$cart_quantity       = 0;
 		$prev_total_discount = 0;
 		$total_units         = 0;
@@ -1769,7 +1745,7 @@ class Elex_RulesValidator
 
 				$rprice               = isset($xa_cart_price[$ppid]) ?  $xa_cart_price[$ppid] : 0;
 				$sprice               = isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid]) ?  $executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$ppid] : $rprice;
-				$prev_total_discount += ($rprice - $sprice) * $units;
+				$prev_total_discount += ( $rprice - $sprice ) * $units;
 			}
 		}
 
@@ -1785,7 +1761,7 @@ class Elex_RulesValidator
 		if ($discount_type == 'Percent Discount') {
 			$discount_amt = floatval($value) * floatval($old_price) / 100;
 		} elseif ($discount_type == 'Flat Discount') {
-			if($current_quantity){
+			if ($current_quantity) {
 				if ($do_not_execute === true) {
 					$discount_amt = floatval($value);
 				} else {
@@ -1798,8 +1774,8 @@ class Elex_RulesValidator
 			$discount_amt = 0;
 		}
 
-		if (!empty($max_discount) && is_numeric($max_discount) && ((($discount_amt * $cart_quantity) + $prev_total_discount) >= $max_discount)) {
-			$discount_amt = ($max_discount - $prev_total_discount) / $cart_quantity;
+		if (!empty($max_discount) && is_numeric($max_discount) && ( ( ( $discount_amt * $cart_quantity ) + $prev_total_discount ) >= $max_discount )) {
+			$discount_amt = ( $max_discount - $prev_total_discount ) / $cart_quantity;
 		}
 
 		if (isset($adjustment) && is_numeric($adjustment)) {
@@ -1813,7 +1789,7 @@ class Elex_RulesValidator
 		//// code added to support discount on specified quantity in combinational rules only when it is restricted to discount on $pid
 		if (!empty($rule['discount_on_product_id']) && in_array($pid, $rule['discount_on_product_id']) && !empty($rule['product_id'][$pid]) && !empty($xa_cart_quantities[$pid]) && $rule['product_id'][$pid] < $xa_cart_quantities[$pid]) {
 			$remaining_qnty = $xa_cart_quantities[$pid] - $rule['product_id'][$pid];
-			$new_price      =  (($new_price * $rule['product_id'][$pid]) + ($old_price * $remaining_qnty)) / $xa_cart_quantities[$pid];
+			$new_price      =  ( ( $new_price * $rule['product_id'][$pid] ) + ( $old_price * $remaining_qnty ) ) / $xa_cart_quantities[$pid];
 		}
 		///// adding to cache
 		if (!isset($executed_rule_pid_price[$rule['rule_type'] . ':' . $rule_no][$object_hash])) {
@@ -1825,8 +1801,7 @@ class Elex_RulesValidator
 		return $new_price;
 	}
 
-	public function elex_dp_ExecuteBOGORule($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1)
-	{
+	public function elex_dp_ExecuteBOGORule( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1) {
 		global $xa_dp_setting;
 		global $woocommerce;
 		global $xa_cart_quantities, $xa_cart_price;
@@ -1843,7 +1818,7 @@ class Elex_RulesValidator
 			$multiple = 9999;
 			foreach ($rule['purchased_product_id'] as $_pid => $_qnty) {
 				if (!empty($xa_cart_quantities[$_pid]) && !empty($_qnty) && $xa_cart_quantities[$_pid] > $_qnty) {
-					$tmp = (int) ($xa_cart_quantities[$_pid] / $_qnty);
+					$tmp = (int) ( $xa_cart_quantities[$_pid] / $_qnty );
 					if ($tmp > 1 && $tmp < $multiple) {
 						$multiple = $tmp;
 					}
@@ -1858,7 +1833,7 @@ class Elex_RulesValidator
 							}
 						}
 						if ($total_childs_qty_in_cart) {
-							$tmp = (int) ($total_childs_qty_in_cart / $_qnty);
+							$tmp = (int) ( $total_childs_qty_in_cart / $_qnty );
 							if ($tmp > 1 && $tmp < $multiple) {
 								$multiple = $tmp;
 							}
@@ -1872,7 +1847,7 @@ class Elex_RulesValidator
 		}
 
 		//If free product is set
-		if (!isset($rule['set_free_option']) || (isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product')) {
+		if (!isset($rule['set_free_option']) || ( isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product' )) {
 
 			////////if free product is already in cart with exact quanitty this code will set its price as zero
 			if (in_array($pid, array_keys($rule['free_product_id'])) &&  $xa_dp_setting['auto_add_free_product_on_off'] != 'on') {
@@ -1887,14 +1862,14 @@ class Elex_RulesValidator
 				$free_unit = isset($rule['free_product_id'][$pid]) ? $rule['free_product_id'][$pid] : 0;
 				$free_unit = $free_unit > $unit ? $unit : $free_unit;
 
-				if(array_key_exists($pid, $rule['purchased_product_id']) && array_key_exists($pid, $rule['free_product_id'])){
-					if($free_unit >= $unit){
-						$free_unit = $unit - (int)$rule['purchased_product_id'][$pid];
-					}else{
-						$free_unit = ($rule['free_product_id'][$pid]);
+				if (array_key_exists($pid, $rule['purchased_product_id']) && array_key_exists($pid, $rule['free_product_id'])) {
+					if ($free_unit >= $unit) {
+						$free_unit = $unit - (int) $rule['purchased_product_id'][$pid];
+					} else {
+						$free_unit = ( $rule['free_product_id'][$pid] );
 					}
 				}
-				if ($all_free_product_present == true && (is_cart() || is_ajax() || is_checkout())) {
+				if ($all_free_product_present == true && ( is_cart() || is_ajax() || is_checkout() )) {
 					$total_adjustment_price = 0;
 					if (isset($adjustment) && is_numeric($adjustment)) {
 						if ($multiple >= $unit) { //to make repeat rule work with auto add disabled
@@ -1905,15 +1880,15 @@ class Elex_RulesValidator
 					} else {
 						$total_adjustment_price = 0;
 					}
-					if (($unit - (float) $free_unit * $multiple) < 0) { //to make repeat rule work with auto add disabled
+					if (( $unit - (float) $free_unit * $multiple ) < 0) { //to make repeat rule work with auto add disabled
 						$total_old_price = 0;
 					} else {
-						$total_old_price = $old_price * ($unit - (float) $free_unit * $multiple);
+						$total_old_price = $old_price * ( $unit - (float) $free_unit * $multiple );
 					}
 					if ($xa_dp_setting['auto_add_free_product_on_off'] == 'on') {
 						return  $old_price;
 					} else {
-						return (($total_old_price + $total_adjustment_price) / $unit);
+						return ( ( $total_old_price + $total_adjustment_price ) / $unit );
 					}
 				}
 			}
@@ -1976,15 +1951,15 @@ class Elex_RulesValidator
 			}
 
 
-			if (($pid == $product_tosetfree)) {
+			if (( $pid == $product_tosetfree )) {
 
 				$unit      = isset($xa_cart_quantities[$product_tosetfree]) ? $xa_cart_quantities[$product_tosetfree] : 1;
 				$free_unit = $cheapest_product_quantity > $unit ? $unit : $cheapest_product_quantity;
 
-				if(array_key_exists($pid, $rule['purchased_product_id'])){
-					if($cheapest_product_quantity >= $unit){
-						$free_unit = $unit - (int)$rule['purchased_product_id'][$pid];
-					}else{
+				if (array_key_exists($pid, $rule['purchased_product_id'])) {
+					if ($cheapest_product_quantity >= $unit) {
+						$free_unit = $unit - (int) $rule['purchased_product_id'][$pid];
+					} else {
 						$free_unit = $cheapest_product_quantity ;
 					}
 				}
@@ -1993,7 +1968,7 @@ class Elex_RulesValidator
 					$all_free_product_present = false;
 				}
 
-				if ($all_free_product_present == true && (is_cart() || is_ajax() || is_checkout())) {
+				if ($all_free_product_present == true && ( is_cart() || is_ajax() || is_checkout() )) {
 					$total_adjustment_price = 0;
 					if (isset($adjustment) && is_numeric($adjustment)) {
 						if ($multiple >= $unit) { //to make repeat rule work with auto add disabled
@@ -2004,12 +1979,12 @@ class Elex_RulesValidator
 					} else {
 						$total_adjustment_price = 0;
 					}
-					if (($unit - (float) $free_unit * $multiple) < 0) { //to make repeat rule work with auto add disabled
+					if (( $unit - (float) $free_unit * $multiple ) < 0) { //to make repeat rule work with auto add disabled
 						$total_old_price = 0;
 					} else {
-						$total_old_price = $old_price * ($unit - (float) $free_unit * $multiple);
+						$total_old_price = $old_price * ( $unit - (float) $free_unit * $multiple );
 					}
-					return (($total_old_price + $total_adjustment_price) / $unit);
+					return ( ( $total_old_price + $total_adjustment_price ) / $unit );
 				}
 			}
 			/////////////////////////////////////////////////////////
@@ -2028,8 +2003,7 @@ class Elex_RulesValidator
 		}
 		return $old_price;
 	}
-	public function elex_dp_ExecuteBOGO_category_Rule($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1)
-	{
+	public function elex_dp_ExecuteBOGO_category_Rule( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1) {
 		global $xa_dp_setting;
 		global $woocommerce;
 		global $xa_cart_quantities, $xa_cart_price, $xa_cart_categories, $xa_cart_categories_items;
@@ -2046,7 +2020,7 @@ class Elex_RulesValidator
 		$rule['free_product_id']       = elex_dp_WPML_Compatible_ids($rule['free_product_id'], 'product', true);
 
 		//If free product is set
-		if (!isset($rule['set_free_option']) || (isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product')) {
+		if (!isset($rule['set_free_option']) || ( isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product' )) {
 
 			////////if free product is already in cart with exact quanitty this code will set its price as zero
 			if (in_array($pid, array_keys($rule['free_product_id'])) && $xa_cart_quantities[$pid] >= $rule['free_product_id'][$pid] && $xa_dp_setting['auto_add_free_product_on_off'] != 'on') {
@@ -2065,26 +2039,26 @@ class Elex_RulesValidator
 
 				foreach ($rule['purchased_category_id'] as $_cid => $_qnty_and_checkon) {
 	
-					if ((array_key_exists($pid, $rule['free_product_id'])) && in_array($_cid, $product_categories) && !($xa_cart_categories_items[$_cid] > 1)) {
+					if (( array_key_exists($pid, $rule['free_product_id']) ) && in_array($_cid, $product_categories) && !( $xa_cart_categories_items[$_cid] > 1 )) {
 						$add_if_not_auto = $add_if_not_auto + 1;
 					}
 				}
-				if($add_if_not_auto > 0){
-					if($free_unit >= $unit){
+				if ($add_if_not_auto > 0) {
+					if ($free_unit >= $unit) {
 						$free_unit = $unit - 1;
 					}
 				}
 
-				if ($all_free_product_present == true && (is_cart() || is_checkout())) {
+				if ($all_free_product_present == true && ( is_cart() || is_checkout() )) {
 					$total_adjustment_price = 0;
 					if (isset($adjustment) && is_numeric($adjustment)) {
 						$total_adjustment_price = $adjustment * $free_unit;
 					}
-					$total_old_price = $old_price * ($unit - (float) $free_unit);
+					$total_old_price = $old_price * ( $unit - (float) $free_unit );
 					if ($xa_dp_setting['auto_add_free_product_on_off'] == 'on') {
 						return  $old_price;
 					} else {
-						return (($total_old_price + $total_adjustment_price)) / $unit;
+						return ( ( $total_old_price + $total_adjustment_price ) ) / $unit;
 					}
 				}
 			}
@@ -2140,21 +2114,21 @@ class Elex_RulesValidator
 			$free_unit = $cheapest_product_quantity > $unit ? $unit : $cheapest_product_quantity;
 
 			////////if free product is already in cart with exact quanitty this code will set its price as zero
-			if (($pid == $product_tosetfree)) {
+			if (( $pid == $product_tosetfree )) {
 
 				$product_categories = !empty($xa_cart_categories[$pid]) ? $xa_cart_categories[$pid] : array();
 				$add_if_not_auto = 0;
 
 				foreach ($rule['purchased_category_id'] as $_cid => $_qnty_and_checkon) {
 	
-					if (($pid == $product_tosetfree) && in_array($_cid, $product_categories) && !($xa_cart_categories_items[$_cid] > 1)) {
+					if (( $pid == $product_tosetfree ) && in_array($_cid, $product_categories) && !( $xa_cart_categories_items[$_cid] > 1 )) {
 						$add_if_not_auto = $add_if_not_auto + 1;
 					}
 				}
-				if($add_if_not_auto > 0){
-					if($cheapest_product_quantity >= $unit){
+				if ($add_if_not_auto > 0) {
+					if ($cheapest_product_quantity >= $unit) {
 						$free_unit = $unit - 1;
-					}else{
+					} else {
 						$free_unit = $cheapest_product_quantity ;
 					}
 				}
@@ -2163,16 +2137,16 @@ class Elex_RulesValidator
 					$all_free_product_present = false;
 				}
 
-				if ($all_free_product_present == true && (is_cart() || is_checkout())) {
+				if ($all_free_product_present == true && ( is_cart() || is_checkout() )) {
 
 					$total_adjustment_price = 0;
 					if (isset($adjustment) && is_numeric($adjustment)) {
 						$total_adjustment_price = $adjustment * $free_unit;
 					}
 
-					$total_old_price = $old_price * ($unit - (float) $free_unit);
+					$total_old_price = $old_price * ( $unit - (float) $free_unit );
 
-					return (($total_old_price + $total_adjustment_price)) / $unit;
+					return ( ( $total_old_price + $total_adjustment_price ) ) / $unit;
 				}
 			}
 		}
@@ -2184,8 +2158,7 @@ class Elex_RulesValidator
 		return $old_price;
 	}
 
-	public function elex_dp_Executebogo_tag_rules($old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1)
-	{
+	public function elex_dp_Executebogo_tag_rules( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1) {
 		global $xa_dp_setting;
 		global $woocommerce;
 		global $xa_cart_quantities, $xa_cart_price, $xa_cart_tags_items;
@@ -2216,7 +2189,7 @@ class Elex_RulesValidator
 						}
 					}
 					if ($count != 0) {
-						$tmp = (int) ($count / $_qnty);
+						$tmp = (int) ( $count / $_qnty );
 						if ($tmp > 1 && $tmp < $multiple) {
 							$multiple = $tmp;
 						}
@@ -2230,7 +2203,7 @@ class Elex_RulesValidator
 					}
 
 					if ($total_items_with_tag != 0) {
-						$tmp = (int) ($total_items_with_tag / $_qnty);
+						$tmp = (int) ( $total_items_with_tag / $_qnty );
 						if ($tmp > 1 && $tmp < $multiple) {
 							$multiple = $tmp;
 						}
@@ -2243,7 +2216,7 @@ class Elex_RulesValidator
 		}
 
 		//If free product is set
-		if (!isset($rule['set_free_option']) || (isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product')) {
+		if (!isset($rule['set_free_option']) || ( isset($rule['set_free_option']) && $rule['set_free_option'] == 'select_product' )) {
 
 			////////if free product is already in cart with exact quanitty this code will set its price as zero
 			if (in_array($pid, array_keys($rule['free_product_id'])) && $xa_cart_quantities[$pid] >= $rule['free_product_id'][$pid] && $xa_dp_setting['auto_add_free_product_on_off'] != 'on') {
@@ -2262,18 +2235,18 @@ class Elex_RulesValidator
 	
 				foreach ($rule['purchased_tag_id'] as $_cid => $_qnty_and_checkon) {
 	
-					if ((array_key_exists($pid, $rule['free_product_id'])) && in_array($_cid, $product_tags) && !($xa_cart_tags_items[$_cid] > 1)) {
+					if (( array_key_exists($pid, $rule['free_product_id']) ) && in_array($_cid, $product_tags) && !( $xa_cart_tags_items[$_cid] > 1 )) {
 						$add_if_not_auto = $add_if_not_auto + 1;
 					}
 
 				}
-				if($add_if_not_auto > 0){
-					if($free_unit >= $unit){
+				if ($add_if_not_auto > 0) {
+					if ($free_unit >= $unit) {
 						$free_unit = $unit - 1;
 					}
 				}
 
-				if ($all_free_product_present == true && (is_cart() || is_checkout())) {
+				if ($all_free_product_present == true && ( is_cart() || is_checkout() )) {
 					$total_adjustment_price = 0;
 					if (isset($adjustment) && is_numeric($adjustment)) {
 						if ($multiple >= $unit) { //to make repeat rule work with auto add disabled
@@ -2284,15 +2257,15 @@ class Elex_RulesValidator
 					} else {
 						$total_adjustment_price = 0;
 					}
-					if (($unit - (float) $free_unit * $multiple) < 0) { //to make repeat rule work with auto add disabled
+					if (( $unit - (float) $free_unit * $multiple ) < 0) { //to make repeat rule work with auto add disabled
 						$total_old_price = 0;
 					} else {
-						$total_old_price = $old_price * ($unit - (float) $free_unit * $multiple);
+						$total_old_price = $old_price * ( $unit - (float) $free_unit * $multiple );
 					}
 					if ($xa_dp_setting['auto_add_free_product_on_off'] == 'on') {
 						return  $old_price;
 					} else {
-						return (($total_old_price + $total_adjustment_price)) / $unit;
+						return ( ( $total_old_price + $total_adjustment_price ) ) / $unit;
 					}
 				}
 			}
@@ -2348,21 +2321,21 @@ class Elex_RulesValidator
 			$free_unit = $cheapest_product_quantity > $unit ? $unit : $cheapest_product_quantity;
 
 			////////if free product is already in cart with exact quanitty this code will set its price as zero
-			if (($pid == $product_tosetfree)) {
+			if (( $pid == $product_tosetfree )) {
 
 				$product_tags = !empty($xa_cart_tags[$pid]) ? $xa_cart_tags[$pid] : array();
 				$add_if_not_auto = 0;
 	
 				foreach ($rule['purchased_tag_id'] as $_cid => $_qnty_and_checkon) {
 	
-					if (($pid == $product_tosetfree) && in_array($_cid, $product_tags) && !($xa_cart_tags_items[$_cid] > 1)) {
+					if (( $pid == $product_tosetfree ) && in_array($_cid, $product_tags) && !( $xa_cart_tags_items[$_cid] > 1 )) {
 						$add_if_not_auto = $add_if_not_auto + 1;
 					}
 				}
-				if($add_if_not_auto > 0){
-					if($cheapest_product_quantity >= $unit){
+				if ($add_if_not_auto > 0) {
+					if ($cheapest_product_quantity >= $unit) {
 						$free_unit = $unit - 1;
-					}else{
+					} else {
 						$free_unit = $cheapest_product_quantity ;
 					}
 				}
@@ -2372,7 +2345,7 @@ class Elex_RulesValidator
 				}
 
 
-				if ($all_free_product_present == true && (is_cart() || is_checkout())) {
+				if ($all_free_product_present == true && ( is_cart() || is_checkout() )) {
 
 					$total_adjustment_price = 0;
 					if (isset($adjustment) && is_numeric($adjustment)) {
@@ -2384,13 +2357,13 @@ class Elex_RulesValidator
 					} else {
 						$total_adjustment_price = 0;
 					}
-					if (($unit - (float) $free_unit * $multiple) < 0) { //to make repeat rule work with auto add disabled
+					if (( $unit - (float) $free_unit * $multiple ) < 0) { //to make repeat rule work with auto add disabled
 						$total_old_price = 0;
 					} else {
-						$total_old_price = $old_price * ($unit - (float) $free_unit * $multiple);
+						$total_old_price = $old_price * ( $unit - (float) $free_unit * $multiple );
 					}
 
-					return (($total_old_price + $total_adjustment_price)) / $unit;
+					return ( ( $total_old_price + $total_adjustment_price ) ) / $unit;
 				}
 			}
 		}
@@ -2402,8 +2375,7 @@ class Elex_RulesValidator
 		return $old_price;
 	}
 
-	public function validate_product_matches_categories($product, $rule)
-	{
+	public function validate_product_matches_categories( $product, $rule) {
 		if ($product->is_type('variation')) {
 			$parent_id          = elex_dp_is_wc_version_gt_eql('2.7') ? $product->get_parent_id() : $product->parent->id;
 			$parent_product     = wc_get_product($parent_id);

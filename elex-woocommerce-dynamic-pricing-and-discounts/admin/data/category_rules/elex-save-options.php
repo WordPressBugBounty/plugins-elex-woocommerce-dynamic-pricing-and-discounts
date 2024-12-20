@@ -21,13 +21,13 @@ if ( !empty($_REQUEST['offer_name']) && !empty($_REQUEST['category_id']) && !emp
 
 	$prev_data = get_option('xa_dp_rules', $dummy_settings);
 	$new_rule = array(
-        'offer_name'             => sanitize_text_field($_REQUEST['offer_name']),
-        'category_id'            => array_map('sanitize_text_field', $_REQUEST['category_id']),
-        'check_on'               => sanitize_text_field($_REQUEST['check_on']),
-        'min'                    => sanitize_text_field($_REQUEST['min']),
-        'max'                    => !empty($_REQUEST['max']) ? sanitize_text_field($_REQUEST['max']) : null,
-        'discount_type'          => sanitize_text_field($_REQUEST['discount_type']),
-        'value'                  => sanitize_text_field($_REQUEST['value']),
+		'offer_name'             => sanitize_text_field($_REQUEST['offer_name']),
+		'category_id'            => array_map('sanitize_text_field', $_REQUEST['category_id']),
+		'check_on'               => sanitize_text_field($_REQUEST['check_on']),
+		'min'                    => sanitize_text_field($_REQUEST['min']),
+		'max'                    => !empty($_REQUEST['max']) ? sanitize_text_field($_REQUEST['max']) : null,
+		'discount_type'          => sanitize_text_field($_REQUEST['discount_type']),
+		'value'                  => sanitize_text_field($_REQUEST['value']),
 		'max_discount' => null,
 		'allow_roles' => array(),
 		'allow_membership_plans' => array(),
@@ -37,13 +37,13 @@ if ( !empty($_REQUEST['offer_name']) && !empty($_REQUEST['category_id']) && !emp
 		'email_ids' => null,
 		'prev_order_count' => null,
 		'prev_order_total_amt' => null,
-    );
+	);
 
 	if (!isset($prev_data[$active_tab]) || count($prev_data[$active_tab]) == 0) {
-        $prev_data[$active_tab][1] = $new_rule;
-    } else {
-        $prev_data[$active_tab][] = $new_rule;
-    }
+		$prev_data[$active_tab][1] = $new_rule;
+	} else {
+		$prev_data[$active_tab][] = $new_rule;
+	}
 
 	do_action( 'wpml_register_single_string', 'eh-dynamic-pricing', $active_tab . ':' . count($prev_data[$active_tab]), sanitize_text_field($_REQUEST['offer_name']));
 	update_option('xa_dp_rules', $prev_data);

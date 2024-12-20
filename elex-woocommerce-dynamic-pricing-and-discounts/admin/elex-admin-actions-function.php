@@ -119,9 +119,9 @@ function elex_dp_update_rules_arrangement() {
 	$rules_order = !empty($_POST['rules-order'])?$_POST['rules-order']:'';
 	$rules_type  = !empty($_POST['rules-type'])?$_POST['rules-type']:'';
 	if (!wp_verify_nonce($nonce, 'update_rules_arrangement')) {
-        wp_die('unauthorised access [unable to verify nonce]');
-    } else {
-        $allrules = get_option('xa_dp_rules');
+		wp_die('unauthorised access [unable to verify nonce]');
+	} else {
+		$allrules = get_option('xa_dp_rules');
 		$allRules = !empty($allrules[$rules_type])?$allrules[$rules_type]:array();
 
 		//Making array of existing rules on perpage
@@ -136,11 +136,11 @@ function elex_dp_update_rules_arrangement() {
 		}
 
 		//Updating rules order in existing_perpage_rules_order
-		if($reordered_rules_on_given_page){
-			if($paged_rules = $existing_perpage_rules_order[1]){
+		if ($reordered_rules_on_given_page) {
+			if ($paged_rules = $existing_perpage_rules_order[1]) {
 				$updated_order_on_index = [];
 				$i=0;
-                foreach($paged_rules as $key => $rule){
+				foreach ($paged_rules as $key => $rule) {
 					$updated_order_on_index[$key] = $reordered_rules_on_given_page[$i];
 					$i++;
 				}
@@ -150,24 +150,24 @@ function elex_dp_update_rules_arrangement() {
 
 		//Setting up final data
 		$reordered_final_rules_array = [];
-        foreach($existing_perpage_rules_order as $rules_array){
-			if($rules_array){
-				foreach($rules_array as $key => $rules){
+		foreach ($existing_perpage_rules_order as $rules_array) {
+			if ($rules_array) {
+				foreach ($rules_array as $key => $rules) {
 					$reordered_final_rules_array[$key] = $rules;
 				}
 			}
 		}
 
 		//Saving it to database
-		if(!empty($reordered_final_rules_array)){
-			$reordered_final_rules_array = array_reverse($reordered_final_rules_array,true);
+		if (!empty($reordered_final_rules_array)) {
+			$reordered_final_rules_array = array_reverse($reordered_final_rules_array, true);
 			$allrules[$rules_type] = $reordered_final_rules_array;
 			update_option('xa_dp_rules', $allrules);
 			wp_die('Arrangements Saved');
-		}else{
+		} else {
 			wp_die('unable to save');
 		}
-    }
+	}
 }
 
 add_action('wp_ajax_update_coupons_field', 'elex_dp_update_coupons_field');

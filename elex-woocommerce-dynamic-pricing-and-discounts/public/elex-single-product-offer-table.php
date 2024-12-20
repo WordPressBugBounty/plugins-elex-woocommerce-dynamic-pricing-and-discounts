@@ -13,7 +13,7 @@ if (!empty($valid_rules)) {
 }
 
 if (!empty($offers)) {
-?>
+	?>
 
 	<style>
 		.xa_offer_header {
@@ -32,7 +32,7 @@ if (!empty($offers)) {
 			<ul class="xa_offer_table_list">
 				<?php
 				foreach ($offers as $type_rule_no => $offer) {
-				?>
+					?>
 					<li class="<?php echo $type_rule_no; ?>_item  xa_offer_table_list_item "><span class="xa_offer_item_span"><?php echo apply_filters('wpml_translate_single_string', $offer, 'eh-dynamic-pricing', $type_rule_no); ?></span></li>
 				<?php
 				}

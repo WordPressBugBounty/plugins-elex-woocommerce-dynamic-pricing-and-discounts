@@ -32,26 +32,29 @@ if (!defined('ABSPATH')) {
 								</svg>
 						</th>
 						<td class="text-start fw-bold">
-							<?php if($key == 'product_rules' || $key == 'category_rules'){
+							<?php
+							if ($key == 'product_rules' || $key == 'category_rules') {
 									echo esc_html($rules_modes[$key]);
-								}else{
-									echo esc_html($rules_modes[$key]);?>
-									<sup class="elex_dp_go_premium_color"><?php esc_html_e('[Premium]', 'eh-dynamic-pricing-discounts'); ?></sup><?php
+							} else {
+								echo esc_html($rules_modes[$key]);
+								?>
+									<sup class="elex_dp_go_premium_color"><?php esc_html_e('[Premium]', 'eh-dynamic-pricing-discounts'); ?></sup>
+																										<?php
 
-								}
+							}
 							?>
 						</td>
 						<td>
 							<label class="elex-switch-btn">
-								<?php if($key == 'product_rules' || $key == 'category_rules'){ ?>
+								<?php if ($key == 'product_rules' || $key == 'category_rules') { ?>
 									<input type="checkbox" name='enabled_modes[<?php echo esc_attr($key); ?>]' value='<?php echo esc_attr($key); ?>' <?php echo in_array($key, $execution_order) ? 'checked' : ''; ?>>
 									<div class="elex-switch-icon round"></div>
-									<?php }else{ ?>
+									<?php } else { ?>
 										<div class="elex-switch-icon round"></div>
 										<?php
 
 									}
-								?>
+									?>
 							</label>
 						</td>
 						<input type="hidden" name="rules_modes_order[]" value="<?php echo esc_attr($key); ?>">

@@ -34,11 +34,11 @@ class Elex_dynamic_pricing_plugin_Activator {
 		//Updating xa_dp_rules in options
 		$dummy_option = array('product_rules' => array(), 'combinational_rules' => array(), 'cat_combinational_rules' => array(), 'category_rules' => array(), 'cart_rules' => array(), 'buy_get_free_rules' => array() ,'BOGO_category_rules'=>array(), 'bogo_tag_rules' =>array(), 'tag_rules' => array());
 		$prev_rules   = get_option('xa_dp_rules', $dummy_option);
-		foreach($prev_rules as $rule_type => $rules){
+		foreach ($prev_rules as $rule_type => $rules) {
 			$reordered_rules = [];
 			$i = 1;
-			if($rules) {
-				foreach($rules as $rule) {
+			if ($rules) {
+				foreach ($rules as $rule) {
 					$reordered_rules[$i] = $rule;
 					$i++;
 				}

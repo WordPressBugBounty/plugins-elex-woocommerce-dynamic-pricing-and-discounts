@@ -11,18 +11,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WF_Software_Activate {
 	private $is_ajax;
-    private $upgrade_url;
-    private $plugin_name;
-    private $product_id;
-    private $api_key;
-    private $activation_unique_product_id;
-    private $renew_license_url;
-    private $instance;
-    private $domain;
-    private $software_version;
-    private $wf_unique_product_id_key;
-    private $wf_api_licence_key;
-    private $wf_instance_key;
+	private $upgrade_url;
+	private $plugin_name;
+	private $product_id;
+	private $api_key;
+	private $activation_unique_product_id;
+	private $renew_license_url;
+	private $instance;
+	private $domain;
+	private $software_version;
+	private $wf_unique_product_id_key;
+	private $wf_api_licence_key;
+	private $wf_instance_key;
 	public function __construct( $upgrade_url, $plugin_name, $product_id, $api_key, $activation_unique_product_id, $renew_license_url, $instance, $domain, $software_version, $plugin_or_theme, $text_domain, $extra, $wf_unique_product_id_key, $wf_api_licence_key, $wf_instance_key ) {
 		// API data
 		$this->upgrade_url                  = $upgrade_url;

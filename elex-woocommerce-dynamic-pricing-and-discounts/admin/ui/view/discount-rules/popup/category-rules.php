@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
 }
 if (isset($_REQUEST['edit']) && !empty($_REQUEST['edit'])) {
 	$edit_value = sanitize_text_field($_REQUEST['edit']);
-    echo '<input type="hidden" name="update" value="' . esc_attr($edit_value) . '" >';
+	echo '<input type="hidden" name="update" value="' . esc_attr($edit_value) . '" >';
 }
 ?>
 
@@ -100,7 +100,7 @@ if (isset($_REQUEST['edit']) && !empty($_REQUEST['edit'])) {
 								</svg>
 							<span><?php esc_html_e('Restrictions', 'eh-dynamic-pricing-discounts'); ?><sup class="elex_dp_go_premium_color"><?php esc_html_e('[Premium]', 'eh-dynamic-pricing-discounts'); ?></sup></span>
 						</div>
-			        </div>
+					</div>
 
 					<!-- tabs content -->
 					<div class="tab-content flex-fill p-3"
@@ -160,10 +160,10 @@ if (isset($_REQUEST['edit']) && !empty($_REQUEST['edit'])) {
 								</div>
 								<div class="col-md-8">
 									<select name="check_on" id="check_on" class="form-select min-width-100">
-										<option value="Quantity" <?php selected(!empty($_REQUEST['check_on']) && ($_REQUEST['check_on'] == 'Quantity')); ?>><?php esc_html_e('No. of items', 'eh-dynamic-pricing-discounts'); ?></option>
-										<option value="Weight" <?php selected(!empty($_REQUEST['check_on']) && ($_REQUEST['check_on'] == 'Weight')); ?>><?php esc_html_e('Weight', 'eh-dynamic-pricing-discounts'); ?></option>
-										<option value="Price" <?php selected(!empty($_REQUEST['check_on']) && ($_REQUEST['check_on'] == 'Price')); ?>><?php esc_html_e('Price', 'eh-dynamic-pricing-discounts'); ?></option>
-										<option value="TotalQuantity" <?php selected(!empty($_REQUEST['check_on']) && ($_REQUEST['check_on'] == 'TotalQuantity')); ?>><?php esc_html_e('No. of Units', 'eh-dynamic-pricing-discounts'); ?></option>
+										<option value="Quantity" <?php selected(!empty($_REQUEST['check_on']) && ( $_REQUEST['check_on'] == 'Quantity' )); ?>><?php esc_html_e('No. of items', 'eh-dynamic-pricing-discounts'); ?></option>
+										<option value="Weight" <?php selected(!empty($_REQUEST['check_on']) && ( $_REQUEST['check_on'] == 'Weight' )); ?>><?php esc_html_e('Weight', 'eh-dynamic-pricing-discounts'); ?></option>
+										<option value="Price" <?php selected(!empty($_REQUEST['check_on']) && ( $_REQUEST['check_on'] == 'Price' )); ?>><?php esc_html_e('Price', 'eh-dynamic-pricing-discounts'); ?></option>
+										<option value="TotalQuantity" <?php selected(!empty($_REQUEST['check_on']) && ( $_REQUEST['check_on'] == 'TotalQuantity' )); ?>><?php esc_html_e('No. of Units', 'eh-dynamic-pricing-discounts'); ?></option>
 									</select>
 								</div>
 							</div>
@@ -210,9 +210,9 @@ if (isset($_REQUEST['edit']) && !empty($_REQUEST['edit'])) {
 									<div class="col-md-8">
 										<select name="discount_type" id="discount_type" 
 											class="form-select min-width-100 elex-dynamic-pricing-discount-type-select">
-											<option value="Percent Discount" <?php selected(!empty($_REQUEST['discount_type']) && ($_REQUEST['discount_type'] == 'Percent Discount')); ?>><?php esc_html_e('Percent Discount', 'eh-dynamic-pricing-discounts'); ?></option>
-											<option value="Flat Discount" <?php selected(!empty($_REQUEST['discount_type']) && ($_REQUEST['discount_type'] == 'Flat Discount')); ?>><?php esc_html_e('Flat Discount', 'eh-dynamic-pricing-discounts'); ?></option>
-											<option value="Fixed Price" <?php selected(!empty($_REQUEST['discount_type']) && ($_REQUEST['discount_type'] == 'Fixed Price')); ?>><?php esc_html_e('Fixed Price', 'eh-dynamic-pricing-discounts'); ?></option>
+											<option value="Percent Discount" <?php selected(!empty($_REQUEST['discount_type']) && ( $_REQUEST['discount_type'] == 'Percent Discount' )); ?>><?php esc_html_e('Percent Discount', 'eh-dynamic-pricing-discounts'); ?></option>
+											<option value="Flat Discount" <?php selected(!empty($_REQUEST['discount_type']) && ( $_REQUEST['discount_type'] == 'Flat Discount' )); ?>><?php esc_html_e('Flat Discount', 'eh-dynamic-pricing-discounts'); ?></option>
+											<option value="Fixed Price" <?php selected(!empty($_REQUEST['discount_type']) && ( $_REQUEST['discount_type'] == 'Fixed Price' )); ?>><?php esc_html_e('Fixed Price', 'eh-dynamic-pricing-discounts'); ?></option>
 											<option value="Coupon Discount" disabled><?php esc_html_e('Coupon Discount', 'eh-dynamic-pricing-discounts'); ?>
 												<sup class="elex_dp_go_premium_color"><?php esc_html_e('[Premium]', 'eh-dynamic-pricing-discounts'); ?></sup></option>
 										</select>
@@ -223,10 +223,14 @@ if (isset($_REQUEST['edit']) && !empty($_REQUEST['edit'])) {
 									<div class="col-md-4" id="discount_type_namesection">
 										<div class="d-flex gap-2 justify-content-between">
 											<h6 id="discount_value" class="mb-0 elex-dynamic-input-label"><?php esc_html_e('Discount Percent', 'eh-dynamic-pricing-discounts'); ?><span class="text-danger">*</span> </h6>
-											<i id="discount_desc" class="desc-tip fa-regular fa-circle-question" data-tip='<?php echo esc_attr__('If you select `Percentage Discount`, the given percentage (value) would be discounted on each unit of the product in the cart.
+											<i id="discount_desc" class="desc-tip fa-regular fa-circle-question" data-tip='
+											<?php
+											echo esc_attr__('If you select `Percentage Discount`, the given percentage (value) would be discounted on each unit of the product in the cart.
 	If you select `Flat Discount`, the given amount (value) would be discounted at subtotal level in the cart.
 	If you select `Fixed Price`, the original price of the product is replaced by the given fixed price (value).
-	If you select `Coupon dicount`, the original price of the cart total is discounted with the selected coupon offer (value).'); ?>'></i>
+	If you select `Coupon dicount`, the original price of the cart total is discounted with the selected coupon offer (value).');
+											?>
+											'></i>
 										</div>
 									</div>
 									<div class="col-md-8">

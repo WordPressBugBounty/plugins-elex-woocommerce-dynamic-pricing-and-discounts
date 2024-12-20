@@ -20,17 +20,17 @@ if (!defined('ABSPATH')) {
 			<div class="d-flex border-0 border-bottom elex-border-secondary-light pb-3  mb-3">
 				<div class="flex-fill">
 					<div class="d-flex justify-content-between mb-3">
-						<h6 class="mb-0"><?php esc_html_e('Rule #: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo esc_html($key); ?></span> | <?php esc_html_e('Rule Name: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo (isset($value['offer_name']) && !empty($value['offer_name'])) ? esc_html($value['offer_name']) : ' - - '; ?></span></h6>
-						<h6 class="mb-0"><?php esc_html_e('Validty: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo (isset($value['from_date']) && !empty($value['from_date']) && isset($value['to_date']) && !empty($value['to_date'])) ? esc_html($value['from_date'] . '/' . esc_html($value['to_date'])) : ' --/--'; ?></span>
+						<h6 class="mb-0"><?php esc_html_e('Rule #: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo esc_html($key); ?></span> | <?php esc_html_e('Rule Name: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo ( isset($value['offer_name']) && !empty($value['offer_name']) ) ? esc_html($value['offer_name']) : ' - - '; ?></span></h6>
+						<h6 class="mb-0"><?php esc_html_e('Validty: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo ( isset($value['from_date']) && !empty($value['from_date']) && isset($value['to_date']) && !empty($value['to_date']) ) ? esc_html($value['from_date'] . '/' . esc_html($value['to_date'])) : ' --/--'; ?></span>
 						</h6>
 					</div>
 
 					<div class="d-flex justify-content-between ">
-						<h6 class="mb-0"><?php esc_html_e('Discount Type: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo (isset($value['discount_type']) && !empty($value['discount_type']))? esc_html($value['discount_type']) : ' - - '; ?></span>
+						<h6 class="mb-0"><?php esc_html_e('Discount Type: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo ( isset($value['discount_type']) && !empty($value['discount_type']) )? esc_html($value['discount_type']) : ' - - '; ?></span>
 						</h6>
-						<h6 class="mb-0"><?php esc_html_e('Discount Value: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo (isset($value['value']) && !empty($value['value'])) ? esc_html($value['value']) : ' - - '; ?></span>
+						<h6 class="mb-0"><?php esc_html_e('Discount Value: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo ( isset($value['value']) && !empty($value['value']) ) ? esc_html($value['value']) : ' - - '; ?></span>
 						</h6>
-						<h6 class="mb-0"><?php esc_html_e('Max Discount: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo (isset($value['max_discount']) && !empty($value['max_discount'])) ? esc_html($value['max_discount']) : ' - - '; ?></span></h6>
+						<h6 class="mb-0"><?php esc_html_e('Max Discount: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo ( isset($value['max_discount']) && !empty($value['max_discount']) ) ? esc_html($value['max_discount']) : ' - - '; ?></span></h6>
 					</div>
 				</div>
 
@@ -62,10 +62,10 @@ if (!defined('ABSPATH')) {
 							foreach ($value['product_id'] as $_pid) {
 								$product = wc_get_product($_pid);
 								if (!empty($_pid) && !empty($product)) {
-									echo '<div class="btn elex-light-blue-bg">' . __($product->get_formatted_name(),'eh-dynamic-pricing-discounts') . '</div>';
+									echo '<div class="btn elex-light-blue-bg">' . __($product->get_formatted_name(), 'eh-dynamic-pricing-discounts') . '</div>';
 								}
 							}
-						}else{
+						} else {
 							echo '<div class="btn elex-light-blue-bg">' . esc_html__(' - - ', 'eh-dynamic-pricing-discounts') . '</div>';
 						}
 						?>
@@ -81,7 +81,7 @@ if (!defined('ABSPATH')) {
 							if (!empty($category)) {
 								echo '<div class="btn elex-light-blue-bg">' . esc_html($category) . '</div>';
 							}
-						}else{
+						} else {
 							echo '<div class="btn elex-light-blue-bg">' . esc_html__(' - - ', 'eh-dynamic-pricing-discounts') . '</div>';
 						}
 						?>
@@ -93,7 +93,7 @@ if (!defined('ABSPATH')) {
 					<div class="d-flex gap-2 flex-wrap">
 						<?php
 						echo '<div class="btn elex-light-blue-bg">' . esc_html__('* All Products in cart *', 'eh-dynamic-pricing-discounts') . '</div>';
-		                ?>
+						?>
 					</div>
 				</div>
 			<?php } ?>
@@ -153,7 +153,7 @@ if (!defined('ABSPATH')) {
 									echo '<div class="btn elex-light-blue-bg">' . esc_html($role) . '</div>';
 								}
 							}
-						}else{
+						} else {
 							echo '<div class="btn elex-light-blue-bg">' . esc_html__(' - - ', 'eh-dynamic-pricing-discounts') . '</div>';
 						}
 						?>
@@ -175,8 +175,8 @@ if (!defined('ABSPATH')) {
 					<p><?php echo esc_html(isset($value['email_ids']) && !empty($value['email_ids']) ? $value['email_ids'] : ' - - '); ?></p>
 				</div>
 				<div class="d-flex justify-content-between">
-					<h6 class="mb-0"><?php esc_html_e('Minimum Number of Previous Order: ', 'eh-dynamic-pricing-discounts');?> <?php echo esc_html(isset($value['prev_order_count']) && !empty($value['prev_order_count']) ? $value['prev_order_count'] : ' - - '); ?></h6>
-					<h6 class="mb-0"><?php esc_html_e('Minimum Total Spending on Previous Order: ', 'eh-dynamic-pricing-discounts');?> <?php echo esc_html(isset($value['prev_order_total_amt']) && !empty($value['prev_order_total_amt']) ? $value['prev_order_total_amt'] : ' - - '); ?></h6>
+					<h6 class="mb-0"><?php esc_html_e('Minimum Number of Previous Order: ', 'eh-dynamic-pricing-discounts'); ?> <?php echo esc_html(isset($value['prev_order_count']) && !empty($value['prev_order_count']) ? $value['prev_order_count'] : ' - - '); ?></h6>
+					<h6 class="mb-0"><?php esc_html_e('Minimum Total Spending on Previous Order: ', 'eh-dynamic-pricing-discounts'); ?> <?php echo esc_html(isset($value['prev_order_total_amt']) && !empty($value['prev_order_total_amt']) ? $value['prev_order_total_amt'] : ' - - '); ?></h6>
 				</div>
 			</div>
 		</div>

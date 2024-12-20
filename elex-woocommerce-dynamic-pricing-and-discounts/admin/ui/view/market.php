@@ -15,7 +15,7 @@
 					<div class="panel-body">
 						<div class="row">
 							<div class=" elex-license-like-img-container col-md-5">
-								<?php $dp_premium_url = "https://elextensions.com/plugin/dynamic-pricing-and-discounts-plugin-for-woocommerce/?utm_source=plugin-settings-related&utm_medium=wp-admin&utm_campaign=in-prod-ads" ?>
+								<?php $dp_premium_url = 'https://elextensions.com/plugin/dynamic-pricing-and-discounts-plugin-for-woocommerce/?utm_source=plugin-settings-related&utm_medium=wp-admin&utm_campaign=in-prod-ads'; ?>
 								<a target="_blank" href="<?php echo esc_url($dp_premium_url); ?>">
 									<img src="<?php echo esc_url(ELEX_DP_CRM_MAIN_URL . '/img/dynamic_pricing.png'); ?>" class="marketing_logos" alt="<?php esc_attr_e('Dynamic Pricing Logo', 'eh-dynamic-pricing-discounts'); ?>">
 								</a>
@@ -37,7 +37,7 @@
 										<br>
 									</p>
 								</ul>
-								<?php $dp_documentation_url = "https://elextensions.com/knowledge-base/set-up-elex-dynamic-pricing-and-discounts-plugin-for-woocommerce/" ?>
+								<?php $dp_documentation_url = 'https://elextensions.com/knowledge-base/set-up-elex-dynamic-pricing-and-discounts-plugin-for-woocommerce/'; ?>
 								<center> <a href="<?php echo esc_url($dp_documentation_url); ?>" target="_blank" class="button button-primary"><?php esc_html_e('Documentation', 'eh-dynamic-pricing-discounts'); ?></a></center>
 							</div>
 						</div>
@@ -47,7 +47,8 @@
 
 			<h6 class="mb-4"><b><?php esc_html_e('You May Also like', 'eh-dynamic-pricing-discounts'); ?></b></h6>
 			<div class="row">
-				<?php $plugins = array(
+				<?php
+				$plugins = array(
 					array(
 						'url'   => 'https://elextensions.com/plugin/woocommerce-catalog-mode-wholesale-role-based-pricing/?utm_source=plugin-settings-related&utm_medium=wp-admin&utm_campaign=in-prod-ads',
 						'image' => 'catalog_mode.png',
@@ -70,7 +71,8 @@
 					),
 				);
 
-				foreach ($plugins as $plugin) : ?>
+				foreach ($plugins as $plugin) :
+					?>
 					<div class="col-md-3 col-6">
 						<div class="elex-license-like-img-container w-100  mb-3">
 							<a target="_blank" href="<?php echo esc_url($plugin['url']); ?>" class="elex-license-like-img-container w-100 d-flex">
