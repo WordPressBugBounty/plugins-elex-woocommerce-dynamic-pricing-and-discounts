@@ -1345,6 +1345,7 @@ class Elex_RulesValidator {
 
 	public function elex_dp_SimpleExecute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
+		$old_price = floatval($old_price);
 		$new_price           = $old_price;
 		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$cart_quantity       = 0;
@@ -1653,6 +1654,7 @@ class Elex_RulesValidator {
 
 	public function elex_dp_Simple_Category_Execute( $old_price, $rule_no, $rule, $pid = 0, $current_quantity = 1, $do_not_execute = false, $object_hash = '') {
 		global $xa_common_flat_discount, $xa_cart_quantities, $executed_rule_pid_price, $xa_cart_categories_units, $xa_cart_categories, $xa_cart_price;
+		$old_price = floatval($old_price);
 		$new_price           = $old_price;
 		$type_code           = $rule['rule_type'] == 'product_rules'  ?  ( $rule['rule_type'] . $pid )   :  $rule['rule_type'];
 		$cart_quantity       = 0;

@@ -153,101 +153,73 @@ class Elex_NewCalculationHandler {
 	 * @return $discounted_price
 	 */
 	public function elex_dp_getDiscountedPriceForProduct( $old_price = '', $product = null, $pid = null) {
-		static $cached_prices = array();
+		static $cached_prices = [];
 	   
-		   // Early return if product or price is not provided
-		if (!$product || !$old_price) {
-			return $old_price;
+		if (!$product || $old_price === null) {
+			return $old_price ;
 		}
-   
-		   $product_id = $product->get_id();
-		if (!isset($cached_prices[$product_id])) {
-			$cached_prices[$product_id] = array();
-		}
-		   
-		   // Check if the discount calculation should be skipped
-		   global $xa_hooks, $xa_dp_setting, $xa_cart_quantities, $xa_common_flat_discount;
-		   $apply_discount = apply_filters('xa_give_discount_on_addon_prices', true);
-		   
+	
+		$product_id = $product->get_id();
+		$cached_prices[$product_id] = $cached_prices[$product_id] ?? [];
+	
+		global $xa_hooks, $xa_cart_quantities, $xa_common_flat_discount;
+	
+		$apply_discount = apply_filters('xa_give_discount_on_addon_prices', true);
 		if (( !is_shop() && !is_product() && !is_product_tag() && !is_product_category() && !did_action('woocommerce_before_calculate_totals') )
-			   || ( !$apply_discount && ( did_action('woocommerce_before_calculate_totals') || doing_action('woocommerce_before_calculate_totals') ) )
-		   ) {
+			|| ( !$apply_discount && did_action('woocommerce_before_calculate_totals') )
+		) {
 			return $old_price;
 		}
+	
 		if ( !is_cart() && !is_checkout() && !empty( get_transient('elex_dp_product_data_' . $product_id) ) ) {
 			$discounted_price = get_transient('elex_dp_product_data_' . $product_id);
 			return $discounted_price;
 		}
-		   
-		   // If the discounted price is cached in transient, return it immediately
+	
 		if (isset($cached_prices[$product_id][current_filter()])) {
-		return $cached_prices[$product_id][current_filter()];
+			return $cached_prices[$product_id][current_filter()];
 		}
-		   // Ensure hooks are added and removed properly
-		   $this->manageHooks(false);
-		   
-		   $regular_price = $product->get_regular_price();
-		   $pid = $pid ?: elex_dp_get_pid($product);
-   
+	
+		$this->manageHooks(false);
+		$regular_price = $product->get_regular_price();
+		$pid = $pid ?: elex_dp_get_pid($product);
+	
 		if (!$pid) {
 			$this->manageHooks(true);
 			return $old_price;
 		}
-   
-		   // Set old_price if empty in certain filters
-   
-   
-		if (in_array(current_filter(), array($xa_hooks['woocommerce_get_sale_price_hook_name'], 'woocommerce_product_variation_get_sale_price')) && empty($old_price)) {
+	
+		if (in_array(current_filter(), [$xa_hooks['woocommerce_get_sale_price_hook_name'], 'woocommerce_product_variation_get_sale_price']) && empty($old_price)) {
 			$old_price = $regular_price;
 		}
-   
-		   $discounted_price = $old_price;
-		   $weight = $product->get_weight();
-   
-		if (!empty($old_price) && $pid) {
-			$parent_id = ( $product->get_type() == 'variation' ) ? $product->get_parent_id() : $pid;
-			$current_quantity = $xa_cart_quantities[$pid] ?? $xa_cart_quantities[$parent_id] ?? 0;
-   
-			if (is_shop() || is_product_category() || is_product() || is_product_tag()) {
-				$current_quantity++;
-			}
-   
-			$objRulesValidator = new Elex_RulesValidator();
-			$valid_rules = $objRulesValidator->elex_dp_getValidRulesForProduct($product, $pid, $current_quantity, $discounted_price, $weight);
-   
-			if ($this->debug_mode) {
-				error_log(str_repeat('-', 380));
-				error_log('Valid Rules for Pid=' . $pid . ' and qnty=' . $current_quantity . ' Valid Rules= ' . print_r($valid_rules, true));
-			}
-   
-			if (is_array($valid_rules) && $valid_rules) {	
-				foreach ($valid_rules as $rule_type_colon_rule_no => $rule) {
-					$object_hash = spl_object_hash($product) . $pid;
-					$discounted_price = $objRulesValidator->elex_dp_execute_rule($discounted_price, $rule_type_colon_rule_no, $rule, $current_quantity, $pid, $object_hash);
-					if ($rule['rule_type'] != 'BOGO_category_rules' && $rule['rule_type'] != 'buy_get_free_rules' && $rule['rule_type'] != 'bogo_tag_rules') {
-						$product->set_price($discounted_price);
-					}
-				}
-			} else {
-				foreach ($xa_common_flat_discount as $key => $value) {
-					$key_parts = explode(':', $key);
-					if (end($key_parts) == $pid) {
-						unset($xa_common_flat_discount[$key]);
-					}
-				}
-			}
-			   
-			   
+	
+		$discounted_price = $old_price;
+		$parent_id = ( $product->get_type() == 'variation' ) ? $product->get_parent_id() : $pid;
+		$current_quantity = $xa_cart_quantities[$pid] ?? $xa_cart_quantities[$parent_id] ?? 0;
+
+		if (is_shop() || is_product_category() || is_product() || is_product_tag()) {
+			$current_quantity++;
 		}
-		if ( empty( get_transient('elex_dp_product_data_' . $product_id) ) ) {
-			set_transient( 'elex_dp_product_data_' . $product_id, $discounted_price );
+	
+		$objRulesValidator = new Elex_RulesValidator();
+		$valid_rules = $objRulesValidator->elex_dp_getValidRulesForProduct($product, $pid, $current_quantity, $discounted_price, $product->get_weight());
+	
+		if ($this->debug_mode) {
+			error_log("Valid Rules for PID={$pid}, Quantity={$current_quantity}: " . print_r($valid_rules, true));
 		}
-		   $cached_prices[$product_id][current_filter()] = $discounted_price;
-   
-		   // Restore hooks
-		   $this->manageHooks(true);
-			   
-		   return ( in_array(current_filter(), array($xa_hooks['woocommerce_get_sale_price_hook_name'], 'woocommerce_product_variation_get_sale_price')) && $regular_price == $discounted_price ) ? '' : $discounted_price;
+	
+		foreach ($valid_rules ?: [] as $rule_key => $rule) {
+			$discounted_price = $objRulesValidator->elex_dp_execute_rule($discounted_price, $rule_key, $rule, $current_quantity, $pid, spl_object_hash($product));
+			if (!in_array($rule['rule_type'], ['BOGO_category_rules', 'buy_get_free_rules', 'bogo_tag_rules'])) {
+				$product->set_price($discounted_price);
+			}
+		}
+	
+		set_transient("elex_dp_product_data_{$product_id}", $discounted_price);
+		$cached_prices[$product_id][current_filter()] = $discounted_price;
+	
+		$this->manageHooks(true);
+		return ( $regular_price == $discounted_price ) ? $regular_price : $discounted_price;
 	}
    
 	  // Helper method to manage hooks
