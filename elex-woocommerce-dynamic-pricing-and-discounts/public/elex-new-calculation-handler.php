@@ -154,7 +154,10 @@ class Elex_NewCalculationHandler {
 	 */
 	public function elex_dp_getDiscountedPriceForProduct( $old_price = '', $product = null, $pid = null) {
 		static $cached_prices = [];
-	   
+	   $users = wp_get_current_user();
+	   $user_role = isset( $users->roles[0] ) ?  $users->roles[0] : 'guest';
+
+
 		if (!$product || $old_price === null) {
 			return $old_price ;
 		}
@@ -171,14 +174,12 @@ class Elex_NewCalculationHandler {
 			return $old_price;
 		}
 	
-		if ( !is_cart() && !is_checkout() && !empty( get_transient('elex_dp_product_data_' . $product_id) ) ) {
-			$discounted_price = get_transient('elex_dp_product_data_' . $product_id);
+		if ( !is_cart() && !is_checkout() && !empty( get_transient('elex_dp_product_data_' . $product_id . '_' . $user_role) ) ) {
+			$discounted_price = get_transient('elex_dp_product_data_' . $product_id . '_' . $user_role);
 			return $discounted_price;
 		}
 	
-		if (isset($cached_prices[$product_id][current_filter()])) {
-			return $cached_prices[$product_id][current_filter()];
-		}
+		
 	
 		$this->manageHooks(false);
 		$regular_price = $product->get_regular_price();
@@ -214,9 +215,8 @@ class Elex_NewCalculationHandler {
 				$product->set_price($discounted_price);
 			}
 		}
-	
-		set_transient("elex_dp_product_data_{$product_id}", $discounted_price);
-		$cached_prices[$product_id][current_filter()] = $discounted_price;
+		
+		set_transient("elex_dp_product_data_{$product_id}_{$user_role}", $discounted_price);
 	
 		$this->manageHooks(true);
 		return ( $regular_price == $discounted_price ) ? $regular_price : $discounted_price;
