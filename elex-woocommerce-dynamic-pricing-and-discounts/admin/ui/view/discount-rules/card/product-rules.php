@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 				<div class="flex-fill">
 					<div class="d-flex justify-content-between mb-3">
 						<h6 class="mb-0"><?php esc_html_e('Rule #: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo esc_html($key); ?></span> | <?php esc_html_e('Rule Name: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo ( isset($value['offer_name']) && !empty($value['offer_name']) ) ? esc_html($value['offer_name']) : ' - - '; ?></span></h6>
-						<h6 class="mb-0"><?php esc_html_e('Validty: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo (  ( isset($value['from_date']) && !empty($value['from_date']) ) || ( isset($value['to_date']) && !empty($value['to_date']) ) ) ? esc_html($value['from_date'] . '/' . esc_html($value['to_date'])) : ' --/--'; ?></span>
+						<h6 class="mb-0"><?php esc_html_e('Validty: ', 'eh-dynamic-pricing-discounts'); ?><span class="fw-normal"><?php echo ( ( isset($value['from_date']) && !empty($value['from_date']) ) || ( isset($value['to_date']) && !empty($value['to_date']) ) ) ? esc_html($value['from_date'] . '/' . esc_html($value['to_date'])) : ' --/--'; ?></span>
 						</h6>
 					</div>
 

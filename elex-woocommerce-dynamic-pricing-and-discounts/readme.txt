@@ -4,9 +4,11 @@ Tags: Dynamic Pricing,Dynamic Discount,Price Rule,Bulk Discount, WooCommerce
 Requires at least: 3.0.1
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+Create custom dynamic pricing rules, discounts, and offers based on user roles, cart totals, product categories and more!
 
 == Description ==
 
@@ -141,6 +143,9 @@ If you are facing any issues, please create a topic at plugin support section on
 3. That's it - you can now configure the plugin.
 
 == Changelog ==
+= 2.2.1 =
+* Fixed an issue where category-based discount was not applying after a product category update.
+
 = 2.2.0 =
 * Fixed an issue with the allowed user role restriction
 
@@ -303,6 +308,9 @@ If you are facing any issues, please create a topic at plugin support section on
 * Product Rules,Combinational Rules,Category Rules,Cart Rules.
 
 == Upgrade Notice ==
+= 2.2.1 =
+* Fixed an issue where category-based discount was not applying after a product category update.
+
 = 2.2.0 =
 * Fixed an issue with the allowed user role restriction
 

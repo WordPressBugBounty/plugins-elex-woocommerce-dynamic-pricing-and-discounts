@@ -134,6 +134,8 @@ class Elex_NewCalculationHandler {
 			}
 			add_filter('woocommerce_product_variation_get_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22, 2);    // update sale price on product page
 		}
+		add_action('save_post_product', array($this,'elex_dp_clear_product_transient'), 10, 2);
+		add_action('woocommerce_update_product', array($this,'elex_dp_clear_product_transient'), 10, 1);
 		/*Fix Start: This code is to solve ->empty array of categories problem from wpml plugin when cart language is changed .  */
 		/*  this will reload the page only one after customer changes the site language so as the wpml plugin gives translated ids  */
 		if (empty($xa_cart_categories_items)   && class_exists('SitePress') && is_cart()) {
@@ -143,6 +145,33 @@ class Elex_NewCalculationHandler {
 		/*Fix End     */
 	}
 
+	public function elex_dp_clear_product_transient( $post_id, $post = null) {
+		global $wpdb;
+		if (!$post_id) {
+			return;
+		}
+		$product = wc_get_product($post_id);
+		$variation_ids = ($product && $product->is_type('variable')) ? $product->get_children() : [];
+	
+		// Include parent and variation IDs
+		$product_ids = array_merge([$post_id], $variation_ids);
+	
+		foreach ($product_ids as $id) {
+			$transient_key_pattern = 'elex_dp_product_data_' . $id . '%';
+	
+			// Delete transients directly from the database
+			$wpdb->query(
+				$wpdb->prepare(
+					"DELETE FROM $wpdb->options WHERE option_name LIKE %s OR option_name LIKE %s",
+					'_transient_' . $transient_key_pattern,
+					'_transient_timeout_' . $transient_key_pattern
+				)
+			);
+		}
+	
+		// Clear the object cache
+		wp_cache_flush();
+	}
 		/**
 	 * Finds valid rules for this product and return discounted price based on (all rules,first match,best discount)
 	 *
@@ -158,7 +187,7 @@ class Elex_NewCalculationHandler {
 	   $user_role = isset( $users->roles[0] ) ?  $users->roles[0] : 'guest';
 
 
-		if (!$product || $old_price === null) {
+	   if (!$product || $old_price === null) {
 			return $old_price ;
 		}
 	
@@ -178,8 +207,6 @@ class Elex_NewCalculationHandler {
 			$discounted_price = get_transient('elex_dp_product_data_' . $product_id . '_' . $user_role);
 			return $discounted_price;
 		}
-	
-		
 	
 		$this->manageHooks(false);
 		$regular_price = $product->get_regular_price();
