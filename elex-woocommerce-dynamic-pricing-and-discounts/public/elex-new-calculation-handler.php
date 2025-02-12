@@ -136,6 +136,8 @@ class Elex_NewCalculationHandler {
 		}
 		add_action('save_post_product', array($this,'elex_dp_clear_product_transient'), 10, 2);
 		add_action('woocommerce_update_product', array($this,'elex_dp_clear_product_transient'), 10, 1);
+		add_action('woocommerce_after_cart_item_quantity_update', array($this,'elex_dp_clear_cart_transient'), 10, 3 );
+
 		/*Fix Start: This code is to solve ->empty array of categories problem from wpml plugin when cart language is changed .  */
 		/*  this will reload the page only one after customer changes the site language so as the wpml plugin gives translated ids  */
 		if (empty($xa_cart_categories_items)   && class_exists('SitePress') && is_cart()) {
@@ -145,13 +147,24 @@ class Elex_NewCalculationHandler {
 		/*Fix End     */
 	}
 
+	public function elex_dp_clear_cart_transient( $cart_item_key, $quantity, $old_quantity) {
+		$cart = WC()->cart->get_cart();
+		$users = wp_get_current_user();
+		$user_role = isset($users->roles[0]) ? $users->roles[0] : 'guest';
+	
+		foreach ($cart as $cart_item) {
+			$product_id = isset( $cart_item['variation_id'] ) && !empty( $cart_item['variation_id'] ) ? $cart_item['variation_id'] : $cart_item['product_id'];
+			delete_transient("elex_dp_product_data_{$product_id}_{$user_role}");
+		}
+	}
+	
 	public function elex_dp_clear_product_transient( $post_id, $post = null) {
 		global $wpdb;
 		if (!$post_id) {
 			return;
 		}
 		$product = wc_get_product($post_id);
-		$variation_ids = ($product && $product->is_type('variable')) ? $product->get_children() : [];
+		$variation_ids = ( $product && $product->is_type('variable') ) ? $product->get_children() : [];
 	
 		// Include parent and variation IDs
 		$product_ids = array_merge([$post_id], $variation_ids);
@@ -187,7 +200,7 @@ class Elex_NewCalculationHandler {
 	   $user_role = isset( $users->roles[0] ) ?  $users->roles[0] : 'guest';
 
 
-	   if (!$product || $old_price === null) {
+		if (!$product || $old_price === null) {
 			return $old_price ;
 		}
 	
