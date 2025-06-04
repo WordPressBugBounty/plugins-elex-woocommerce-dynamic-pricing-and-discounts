@@ -3,10 +3,10 @@
 * 	Plugin Name: ELEX Dynamic Pricing and Discounts for WooCommerce Basic Version
 *	Plugin URI: https://elextensions.com/plugin/elex-dynamic-pricing-and-discounts-plugin-for-woocommerce-free-version/
 *	Description: This plugin helps you to set discounts and pricing dynamically based on minimum quantity,weight,price and allow you to set maximum allowed discounts on every rule.
-*	Version: 2.2.3
+*	Version: 2.2.4
 *	Author: ELEXtensions
 *   WC requires at least: 3.0.0
-*   WC tested up to: 9.7
+*   WC tested up to: 9.8
 *	Author URI: https://elextensions.com
 *	Copyright: 2018 ELEX.
 */

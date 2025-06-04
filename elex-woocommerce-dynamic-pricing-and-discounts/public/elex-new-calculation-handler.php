@@ -101,6 +101,8 @@ class Elex_NewCalculationHandler {
 				remove_filter($xa_hooks['woocommerce_get_price_hook_name'], array($this, 'elex_dp_getDiscountedPriceForProduct'), 22);
 			}
 			remove_filter('woocommerce_product_variation_get_price', array($this, 'elex_dp_getDiscountedPriceForProduct'), 22);
+			add_action('woocommerce_cart_calculate_fees', array($this,'elex_dp_cart_calculate_fee'), 10, 1);
+
 			foreach ($xa_cart_quantities as $_pid => $_qnty) {
 				$prod                  = wc_get_product($_pid);
 				$xa_cart_weight[$_pid] = $prod->get_weight();
@@ -146,7 +148,21 @@ class Elex_NewCalculationHandler {
 		}
 		/*Fix End     */
 	}
-
+	public function elex_dp_cart_calculate_fee() {
+		$users = wp_get_current_user();
+		$user_role = isset($users->roles[0]) ? $users->roles[0] : 'guest';
+		foreach (WC()->cart->get_cart() as $cart_item_key => $values) {
+			$product = $values['data'];
+			if (strpos($cart_item_key, 'FreeForRule') !== false) {
+				continue;
+			}
+			$product_id = isset($values['variation_id']) && !empty($values['variation_id']) ? $values['variation_id'] : $values['product_id'];
+			delete_transient("elex_dp_product_data_{$product_id}_{$user_role}");
+			$id = $product->get_id();
+			$xa_cart_quantities[$id] = !empty($values['quantity']) ? $values['quantity'] : 0;
+		}
+	}
+	
 	public function elex_dp_clear_cart_transient( $cart_item_key, $quantity, $old_quantity) {
 		$cart = WC()->cart->get_cart();
 		$users = wp_get_current_user();
