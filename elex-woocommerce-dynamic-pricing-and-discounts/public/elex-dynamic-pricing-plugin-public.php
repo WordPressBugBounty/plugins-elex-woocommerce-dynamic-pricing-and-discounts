@@ -132,7 +132,7 @@ function elex_dp_init_calculator() {
 			foreach ($childrens as $child) {
 				$prod = wc_get_product($child);
 				if ($prod) {
-					if (WC()->version >= '3.0.0') {
+					if ( version_compare( WC()->version, '3.0.0', '>=' ) ) {
 						if ($prod->get_date_on_sale_from() && $prod->get_date_on_sale_from()->getTimestamp() > time()) {
 							return false;
 						}
@@ -151,7 +151,7 @@ function elex_dp_init_calculator() {
 		} elseif ($product->is_type('simple')) {
 			if ('' !== (string) $product->get_price() && $product->get_regular_price() > $product->get_price()) {
 				$on_sale = true;
-				if (WC()->version >= '3.0.0') {
+				if ( version_compare( WC()->version, '3.0.0', '>=' )) {
 					if ($product->get_date_on_sale_from() && $product->get_date_on_sale_from()->getTimestamp() > time()) {
 						$on_sale = false;
 					}
